@@ -1,2 +1,10 @@
-﻿// See https://aka.ms/new-console-template for more information
-Console.WriteLine("Hello, World!");
+﻿using Library_Console;
+using Library_Console.Data;
+
+internal class Program
+{
+    private static void Main(string[] args)
+    {
+        Menu.MainMenu();
+    }
+}
