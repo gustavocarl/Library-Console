@@ -1,4 +1,4 @@
-﻿namespace Library_Console
+﻿namespace Library_Console.Menu
 {
     public class Menu
     {
