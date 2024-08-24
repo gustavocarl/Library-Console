@@ -1,8 +1,12 @@
-﻿namespace Library_Console.Menu
+﻿using Library_Console.Data;
+using Library_Console.Repository;
+using System.Data.SqlClient;
+
+namespace Library_Console.Menu
 {
     public class Menu
     {
-        public static void MainMenu()
+        public static void MainMenu(SqlConnection connection)
         {
             Console.WriteLine("======================");
             Console.WriteLine("Sistema de Biblioteca");
@@ -23,26 +27,27 @@
                     break;
 
                 case "1":
-                    ReaderMenu();
+                    ReaderMenu(connection);
                     break;
 
                 case "2":
-                    BookMenu();
+                    BookMenu(connection);
                     break;
 
                 case "3":
-                    RentMenu();
+                    RentMenu(connection);
                     break;
 
                 default:
                     Console.WriteLine("Opção inválida");
-                    MainMenu();
+                    MainMenu(connection);
                     break;
             }
         }
 
-        public static void ReaderMenu()
+        public static void ReaderMenu(SqlConnection connection)
         {
+
             Console.WriteLine("=============================");
             Console.WriteLine("Sistema de Biblioteca");
             Console.WriteLine("Menu de Leitor");
@@ -59,34 +64,36 @@
             switch (option)
             {
                 case "0":
-                    MainMenu();
+                    MainMenu(connection);
                     break;
 
                 case "1":
-                    ReaderMenu();
+                    ReaderMenu(connection);
                     break;
 
                 case "2":
-                    ReaderMenu();
+                    ReaderMenu(connection);
                     break;
 
                 case "3":
-                    ReaderMenu();
+                    ReaderMenu(connection);
                     break;
 
                 case "4":
-                    ReaderMenu();
+                    ReaderMenu(connection);
                     break;
 
                 default:
                     Console.WriteLine("Opção inválida");
-                    ReaderMenu();
+                    ReaderMenu(connection);
                     break;
             }
         }
 
-        public static void BookMenu()
+        public static void BookMenu(SqlConnection connection)
         {
+            var bookRepository = new BookRepository(connection);
+
             Console.WriteLine("=============================");
             Console.WriteLine("Sistema de Biblioteca");
             Console.WriteLine("Menu de Livro");
@@ -103,34 +110,37 @@
             switch (option)
             {
                 case "0":
-                    MainMenu();
+                    MainMenu(connection);
                     break;
 
                 case "1":
-                    BookMenu();
+                    bookRepository.SaveBook();
+                    BookMenu(connection);
                     break;
 
                 case "2":
-                    BookMenu();
+                    bookRepository.GetAllBooks();
+                    Console.ReadLine();
+                    BookMenu(connection);
                     break;
 
                 case "3":
-                    BookMenu();
+                    BookMenu(connection);
                     break;
 
                 case "4":
-                    BookMenu();
+                    BookMenu(connection);
                     break;
 
                 default:
                     Console.WriteLine("Opção inválida");
                     Console.WriteLine("Pressione ENTER para continuar...");
-                    BookMenu();
+                    BookMenu(connection);
                     break;
             }
         }
 
-        public static void RentMenu()
+        public static void RentMenu(SqlConnection connection)
         {
             Console.WriteLine("=============================");
             Console.WriteLine("Sistema de Biblioteca");
@@ -147,28 +157,29 @@
             switch (option)
             {
                 case "0":
-                    MainMenu();
+                    MainMenu(connection);
                     break;
+
                 case "1":
-                    RentMenu();
+                    RentMenu(connection);
                     break;
 
                 case "2":
-                    RentMenu();
+                    RentMenu(connection);
                     break;
 
                 case "3":
-                    RentMenu();
+                    RentMenu(connection);
                     break;
 
                 case "4":
-                    RentMenu();
+                    RentMenu(connection);
                     break;
 
                 default:
                     Console.WriteLine("Opção inválida");
                     Console.WriteLine("Pressione ENTER para continuar...");
-                    RentMenu();
+                    RentMenu(connection);
                     break;
             }
         }

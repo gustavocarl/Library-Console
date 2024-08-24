@@ -1,6 +1,6 @@
 ﻿using Library_Console.Data;
 using Library_Console.Menu;
-using Library_Console.Repository;
+using System.Data.SqlClient;
 
 internal class Program
 {
@@ -9,8 +9,11 @@ internal class Program
         var dbSettings = new DbSettings("Server=localhost; Database=LIBRARY_CONSOLE; " +
         "USER ID=sa; PASSWORD=123456; ENCRYPT=TRUE; TRUSTSERVERCERTIFICATE=TRUE; CONNECTION TIMEOUT=30;");
 
-        var readerRepository = new ReaderRepository(dbSettings);
+        var connection = new SqlConnection(dbSettings.ConnectionString);
 
-        Menu.MainMenu();
+        connection.Open();
+
+        Menu.MainMenu(connection);
+
     }
 }
