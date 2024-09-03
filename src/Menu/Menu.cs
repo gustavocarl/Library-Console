@@ -1,4 +1,5 @@
 ﻿using Library_Console.Data;
+using Library_Console.Models;
 using Library_Console.Repository;
 using System.Data.SqlClient;
 
@@ -47,6 +48,9 @@ namespace Library_Console.Menu
 
         public static void ReaderMenu(SqlConnection connection)
         {
+            var readerRepository = new ReaderRepository(connection);
+
+            string document;
 
             Console.WriteLine("=============================");
             Console.WriteLine("Sistema de Biblioteca");
@@ -68,18 +72,27 @@ namespace Library_Console.Menu
                     break;
 
                 case "1":
+                    readerRepository.SaveReader();
                     ReaderMenu(connection);
                     break;
 
                 case "2":
+                    readerRepository.GetAllReaders();
+                    Console.ReadLine();
                     ReaderMenu(connection);
                     break;
 
                 case "3":
+                    Console.WriteLine("CPF");
+                    document = Console.ReadLine()!;
+                    readerRepository.UpdateReader(document);
                     ReaderMenu(connection);
                     break;
 
                 case "4":
+                    Console.WriteLine("CPF");
+                    document = Console.ReadLine()!;
+                    readerRepository.RemoveReader(document);
                     ReaderMenu(connection);
                     break;
 
@@ -93,15 +106,21 @@ namespace Library_Console.Menu
         public static void BookMenu(SqlConnection connection)
         {
             var bookRepository = new BookRepository(connection);
+            string title, author;
+            int id;
 
             Console.WriteLine("=============================");
             Console.WriteLine("Sistema de Biblioteca");
             Console.WriteLine("Menu de Livro");
             Console.WriteLine("=============================");
             Console.WriteLine("1 - Cadastrar novo livro");
-            Console.WriteLine("2 - Listar novo livro");
-            Console.WriteLine("3 - Editar dados do livro");
-            Console.WriteLine("4 - Remover dados do livro");
+            Console.WriteLine("2 - Listar todos os livro");
+            Console.WriteLine("3 - Listar livro por autor");
+            Console.WriteLine("4 - Listar livro pelo título");
+            Console.WriteLine("5 - Editar livro pelo id");
+            Console.WriteLine("6 - Editar livro pelo título");
+            Console.WriteLine("7 - Remover livro pelo id");
+            Console.WriteLine("8 - Remover livro pelo título");
             Console.WriteLine("=============================");
             Console.WriteLine("0 - Retornar ao menu anterior");
             Console.WriteLine("=============================");
@@ -125,13 +144,46 @@ namespace Library_Console.Menu
                     break;
 
                 case "3":
+                    Console.WriteLine("Autor: ");
+                    author = Console.ReadLine()!;
+                    bookRepository.GetBookByAuthor(author);
                     BookMenu(connection);
                     break;
 
                 case "4":
+                    Console.WriteLine("Título");
+                    title = Console.ReadLine()!;
+                    bookRepository.GetBookByTitle(title);
                     BookMenu(connection);
                     break;
 
+                case "5":
+                    Console.WriteLine("id");
+                    id = int.Parse(Console.ReadLine()!);
+                    bookRepository.UpdateBookById(id);
+                    BookMenu(connection);
+                    break;
+
+                case "6":
+                    Console.WriteLine("Título");
+                    title = Console.ReadLine()!;
+                    bookRepository.UpdateBookByTitle(title);
+                    BookMenu(connection);
+                    break;
+
+                case "7":
+                    Console.WriteLine("id");
+                    id = int.Parse(Console.ReadLine()!);
+                    bookRepository.RemoveBookById(id);
+                    BookMenu(connection);
+                    break;
+
+                case "8":
+                    Console.WriteLine("Título");
+                    title = Console.ReadLine()!;
+                    bookRepository.RemoveBookByTitle(title);
+                    BookMenu(connection);
+                    break;
                 default:
                     Console.WriteLine("Opção inválida");
                     Console.WriteLine("Pressione ENTER para continuar...");
