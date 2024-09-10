@@ -1,6 +1,6 @@
 ﻿namespace Library_Console.Models
 {
-    internal class Rent_Books
+    public class Rent_Books
     {
         public int Id { get; set; }
 

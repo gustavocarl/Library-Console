@@ -18,6 +18,10 @@
 
         public string Language { get; set; } = string.Empty;
 
+        public string BookCondition { get; set; } = string.Empty;
+
+        public string BookStatus { get; set; } = string.Empty;
+
         public DateTime CreatedAt { get; set; }
 
         public DateTime UpdatedAt { get; set; }

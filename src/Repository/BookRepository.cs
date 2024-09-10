@@ -17,7 +17,7 @@ namespace Library_Console.Repository
             const string queryAllBooks = "SELECT " +
                     "ID, TITLE, AUTHOR, PAGES, " +
                     "PUBLISHER, ISBN_10, ISBN_13, " +
-                    "LANGUAGE, CREATEDAT, UPDATEDAT " +
+                    "LANGUAGE, BOOK_CONDITION, BOOK_STATUS CREATEDAT, UPDATEDAT " +
                     "FROM BOOK";
 
             using var command = new SqlCommand(queryAllBooks, _connection);
@@ -34,6 +34,8 @@ namespace Library_Console.Repository
                     Console.WriteLine($"ISBN 10:     {reader.GetString(5)}");
                     Console.WriteLine($"ISBN 13:     {reader.GetString(6)}");
                     Console.WriteLine($"Idioma:      {reader.GetString(7)}");
+                    Console.WriteLine($"Condição:    {reader.GetString(8)}");
+                    Console.WriteLine($"Status:      {reader.GetString(9)}");
                     Console.WriteLine($"Criado:      {reader.GetDateTime(8)}");
                     Console.WriteLine($"Atualizado:  {reader.GetDateTime(9)}");
                     Console.WriteLine();
@@ -81,10 +83,10 @@ namespace Library_Console.Repository
                 }
 
                 reader.Close();
-                
+
                 return null!;
             }
-            catch(Exception ex)
+            catch (Exception ex)
             {
                 Console.WriteLine(ex);
                 return null!;
@@ -106,7 +108,7 @@ namespace Library_Console.Repository
                 command.Parameters.AddWithValue("@AUTHOR", author);
 
                 SqlDataReader reader = command.ExecuteReader();
-                while(reader.Read())
+                while (reader.Read())
                 {
                     Console.WriteLine($"ID: {reader.GetInt32(0)}");
                     Console.WriteLine($"Título: {reader.GetString(1)}");
@@ -163,10 +165,10 @@ namespace Library_Console.Repository
 
             const string createBook = "INSERT INTO BOOK ( " +
                 "TITLE, AUTHOR, PAGES, PUBLISHER, ISBN_10, " +
-                "ISBN_13, LANGUAGE, CREATEDAT, UPDATEDAT" +
+                "ISBN_13, LANGUAGE, BOOK_CONDITION, BOOK_STATUS, CREATEDAT, UPDATEDAT" +
                 ") VALUES ( " +
                 "@TITLE, @AUTHOR, @PAGES, @PUBLISHER, @ISBN_10, " +
-                "@ISBN_13, @LANGUAGE, @CREATEDAT, @UPDATEDAT " +
+                "@ISBN_13, @LANGUAGE, @BOOK_CONDITION, @BOOK_STATUS, @CREATEDAT, @UPDATEDAT " +
                 ");";
 
             using var command = new SqlCommand(createBook, _connection);
@@ -179,6 +181,8 @@ namespace Library_Console.Repository
                 command.Parameters.AddWithValue("@ISBN_10", book.Isbn10);
                 command.Parameters.AddWithValue("@ISBN_13", book.Isbn13);
                 command.Parameters.AddWithValue("@LANGUAGE", book.Language);
+                command.Parameters.AddWithValue("@BOOK_CONDITION", book.BookCondition);
+                command.Parameters.AddWithValue("@BOOK_STATUS", book.BookStatus);
                 command.Parameters.AddWithValue("@CREATEDAT", book.CreatedAt);
                 command.Parameters.AddWithValue("@UPDATEDAT", book.UpdatedAt);
 
@@ -233,7 +237,7 @@ namespace Library_Console.Repository
             using var command = new SqlCommand(updateBook, _connection);
             try
             {
-                command.Parameters.AddWithValue("@ID",  id);
+                command.Parameters.AddWithValue("@ID", id);
                 command.Parameters.AddWithValue("@TITLE", book.Title);
                 command.Parameters.AddWithValue("@AUTHOR", book.Author);
                 command.Parameters.AddWithValue("@PAGES", book.Pages);
@@ -314,8 +318,6 @@ namespace Library_Console.Repository
             }
         }
 
-
-
         public Books RemoveBookById(int id)
         {
             try
@@ -346,7 +348,8 @@ namespace Library_Console.Repository
 
         public Books RemoveBookByTitle(string title)
         {
-            const string removeBook = "DELETE FROM BOOK " +
+            const string removeBook = "UPDATE BOOK SET " +
+                "STATUS = 0" +
                 "WHERE TITLE = @TITLE";
 
             using var command = new SqlCommand(removeBook, _connection);
