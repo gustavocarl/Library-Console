@@ -14,11 +14,10 @@ namespace Library_Console.Repository
 
         public Books GetAllBooks()
         {
-            const string queryAllBooks = "SELECT " +
-                    "ID, TITLE, AUTHOR, PAGES, " +
-                    "PUBLISHER, ISBN_10, ISBN_13, " +
-                    "LANGUAGE, BOOK_CONDITION, BOOK_STATUS CREATEDAT, UPDATEDAT " +
-                    "FROM BOOK";
+            const string queryAllBooks = "SELECT ID, TITLE, AUTHOR, " +
+                "PAGES, PUBLISHER, LANGUAGE, BOOK_CONDITION, " +
+                "BOOK_STATUS, ISBN_10, ISBN_13, CREATEDAT, UPDATEDAT " +
+                "FROM BOOK ";
 
             using var command = new SqlCommand(queryAllBooks, _connection);
             try
@@ -31,13 +30,13 @@ namespace Library_Console.Repository
                     Console.WriteLine($"Autor:       {reader.GetString(2)}");
                     Console.WriteLine($"Páginas:     {reader.GetInt32(3)}");
                     Console.WriteLine($"Editora:     {reader.GetString(4)}");
-                    Console.WriteLine($"ISBN 10:     {reader.GetString(5)}");
-                    Console.WriteLine($"ISBN 13:     {reader.GetString(6)}");
-                    Console.WriteLine($"Idioma:      {reader.GetString(7)}");
-                    Console.WriteLine($"Condição:    {reader.GetString(8)}");
-                    Console.WriteLine($"Status:      {reader.GetString(9)}");
-                    Console.WriteLine($"Criado:      {reader.GetDateTime(8)}");
-                    Console.WriteLine($"Atualizado:  {reader.GetDateTime(9)}");
+                    Console.WriteLine($"Idioma:      {reader.GetString(5)}");
+                    Console.WriteLine($"Condição:    {reader.GetString(6)}");
+                    Console.WriteLine($"Status:      {reader.GetBoolean(7)}");
+                    Console.WriteLine($"ISBN 10:     {reader.GetString(8)}");
+                    Console.WriteLine($"ISBN 13:     {reader.GetString(9)}");
+                    Console.WriteLine($"Criado:      {reader.GetDateTime(10)}");
+                    Console.WriteLine($"Atualizado:  {reader.GetDateTime(11)}");
                     Console.WriteLine();
                 }
 
@@ -54,10 +53,9 @@ namespace Library_Console.Repository
 
         public Books GetBookByTitle(string title)
         {
-            const string queryBookTitle = "SELECT " +
-                "ID, TITLE, AUTHOR, PAGES, " +
-                "PUBLISHER, ISBN_10, ISBN_13, " +
-                "LANGUAGE, CREATEDAT, UPDATEDAT " +
+            const string queryBookTitle = " SELECT ID, TITLE, AUTHOR, " +
+                "PAGES PUBLISHER, LANGUAGE, BOOK_CONDITION, " +
+                "BOOK_STATUS, ISBN_10, ISBN_13, CREATEDAT, UPDATEDAT " +
                 "FROM BOOK " +
                 "WHERE TITLE = @TITLE";
 
@@ -67,20 +65,20 @@ namespace Library_Console.Repository
                 command.Parameters.AddWithValue("@TITLE", title);
 
                 SqlDataReader reader = command.ExecuteReader();
-                while (reader.Read())
-                {
-                    Console.WriteLine($"ID:         {reader.GetInt32(0)}");
-                    Console.WriteLine($"Título:     {reader.GetString(1)}");
-                    Console.WriteLine($"Autor:      {reader.GetString(2)}");
-                    Console.WriteLine($"Páginas:    {reader.GetInt32(3)}");
-                    Console.WriteLine($"Editora:    {reader.GetString(4)}");
-                    Console.WriteLine($"ISBN 10:    {reader.GetString(5)}");
-                    Console.WriteLine($"ISBN 13:    {reader.GetString(6)}");
-                    Console.WriteLine($"Idioma:     {reader.GetString(7)}");
-                    Console.WriteLine($"Criado:     {reader.GetDateTime(8)}");
-                    Console.WriteLine($"Atualizado: {reader.GetDateTime(9)}");
-                    Console.WriteLine();
-                }
+
+                Console.WriteLine($"Id:          {reader.GetInt32(0)}");
+                Console.WriteLine($"Título:      {reader.GetString(1)}");
+                Console.WriteLine($"Autor:       {reader.GetString(2)}");
+                Console.WriteLine($"Páginas:     {reader.GetInt32(3)}");
+                Console.WriteLine($"Editora:     {reader.GetString(4)}");
+                Console.WriteLine($"Idioma:      {reader.GetString(5)}");
+                Console.WriteLine($"Condição:    {reader.GetString(6)}");
+                Console.WriteLine($"Status:      {reader.GetBoolean(7)}");
+                Console.WriteLine($"ISBN 10:     {reader.GetString(8)}");
+                Console.WriteLine($"ISBN 13:     {reader.GetString(9)}");
+                Console.WriteLine($"Criado:      {reader.GetDateTime(10)}");
+                Console.WriteLine($"Atualizado:  {reader.GetDateTime(11)}");
+                Console.WriteLine();
 
                 reader.Close();
 
@@ -95,10 +93,9 @@ namespace Library_Console.Repository
 
         public Books GetBookByAuthor(string author)
         {
-            const string queryBookByAuthor = "SELECT " +
-                "ID, TITLE, AUTHOR, PAGES, " +
-                "PUBLISHER, ISBN_10, ISBN_13, " +
-                "LANGUAGE, CREATEDAT, UPDATEDAT " +
+            const string queryBookByAuthor = " SELECT ID, TITLE, AUTHOR, " +
+                "PAGES PUBLISHER, LANGUAGE, BOOK_CONDITION, " +
+                "BOOK_STATUS, ISBN_10, ISBN_13, CREATEDAT, UPDATEDAT " +
                 "FROM BOOK " +
                 "WHERE AUTHOR = @AUTHOR";
 
@@ -110,17 +107,19 @@ namespace Library_Console.Repository
                 SqlDataReader reader = command.ExecuteReader();
                 while (reader.Read())
                 {
-                    Console.WriteLine($"ID: {reader.GetInt32(0)}");
-                    Console.WriteLine($"Título: {reader.GetString(1)}");
-                    Console.WriteLine($"Autor: {reader.GetString(2)}");
-                    Console.WriteLine($"Páginas: {reader.GetInt32(3)}");
-                    Console.WriteLine($"Editora: {reader.GetString(4)}");
-                    Console.WriteLine($"ISBN 10: {reader.GetString(5)}");
-                    Console.WriteLine($"ISBN 13: {reader.GetString(6)}");
-                    Console.WriteLine($"Idioma: {reader.GetString(7)}");
-                    Console.WriteLine($"Criado: {reader.GetDateTime(8)}");
-                    Console.WriteLine($"Atualizado: {reader.GetDateTime(9)}");
-                    Console.WriteLine($"");
+                    Console.WriteLine($"Id:          {reader.GetInt32(0)}");
+                    Console.WriteLine($"Título:      {reader.GetString(1)}");
+                    Console.WriteLine($"Autor:       {reader.GetString(2)}");
+                    Console.WriteLine($"Páginas:     {reader.GetInt32(3)}");
+                    Console.WriteLine($"Editora:     {reader.GetString(4)}");
+                    Console.WriteLine($"Idioma:      {reader.GetString(5)}");
+                    Console.WriteLine($"Condição:    {reader.GetString(6)}");
+                    Console.WriteLine($"Status:      {reader.GetBoolean(7)}");
+                    Console.WriteLine($"ISBN 10:     {reader.GetString(8)}");
+                    Console.WriteLine($"ISBN 13:     {reader.GetString(9)}");
+                    Console.WriteLine($"Criado:      {reader.GetDateTime(10)}");
+                    Console.WriteLine($"Atualizado:  {reader.GetDateTime(11)}");
+                    Console.WriteLine();
                 }
 
                 reader.Close();
@@ -136,6 +135,18 @@ namespace Library_Console.Repository
 
         public Books SaveBook()
         {
+            const string createBook = "INSERT INTO BOOK ( " +
+                "TITLE, AUTHOR, PAGES, " +
+                "PUBLISHER, LANGUAGE, BOOK_CONDITION, " +
+                "BOOK_STATUS, ISBN_10, ISBN_13, " +
+                "CREATEDAT, UPDATEDAT " +
+                ") VALUES ( " +
+                "@TITLE, @AUTHOR, @PAGES, " +
+                "@PUBLISHER, @LANGUAGE, @BOOK_CONDITION, " +
+                "@BOOK_STATUS, @ISBN_10, @ISBN_13, " +
+                "@CREATEDAT, @UPDATEDAT " +
+                ");";
+
             var book = new Books();
 
             Console.WriteLine("Titulo: ");
@@ -150,26 +161,21 @@ namespace Library_Console.Repository
             Console.WriteLine("Editora: ");
             book.Publisher = Console.ReadLine()!;
 
+            Console.WriteLine("Idioma: ");
+            book.Language = Console.ReadLine()!;
+
+            Console.WriteLine("Condição: ");
+            book.BookCondition = Console.ReadLine()!;
+
             Console.WriteLine("ISBN 10: ");
             book.Isbn10 = Console.ReadLine()!;
 
             Console.WriteLine("ISBN 13: ");
             book.Isbn13 = Console.ReadLine()!;
 
-            Console.WriteLine("Idioma: ");
-            book.Language = Console.ReadLine()!;
-
             book.CreatedAt = DateTime.Now;
 
             book.UpdatedAt = DateTime.Now;
-
-            const string createBook = "INSERT INTO BOOK ( " +
-                "TITLE, AUTHOR, PAGES, PUBLISHER, ISBN_10, " +
-                "ISBN_13, LANGUAGE, BOOK_CONDITION, BOOK_STATUS, CREATEDAT, UPDATEDAT" +
-                ") VALUES ( " +
-                "@TITLE, @AUTHOR, @PAGES, @PUBLISHER, @ISBN_10, " +
-                "@ISBN_13, @LANGUAGE, @BOOK_CONDITION, @BOOK_STATUS, @CREATEDAT, @UPDATEDAT " +
-                ");";
 
             using var command = new SqlCommand(createBook, _connection);
             try
@@ -178,11 +184,11 @@ namespace Library_Console.Repository
                 command.Parameters.AddWithValue("@AUTHOR", book.Author);
                 command.Parameters.AddWithValue("@PAGES", book.Pages);
                 command.Parameters.AddWithValue("@PUBLISHER", book.Publisher);
-                command.Parameters.AddWithValue("@ISBN_10", book.Isbn10);
-                command.Parameters.AddWithValue("@ISBN_13", book.Isbn13);
                 command.Parameters.AddWithValue("@LANGUAGE", book.Language);
                 command.Parameters.AddWithValue("@BOOK_CONDITION", book.BookCondition);
-                command.Parameters.AddWithValue("@BOOK_STATUS", book.BookStatus);
+                command.Parameters.AddWithValue("@BOOK_STATUS", true);
+                command.Parameters.AddWithValue("@ISBN_10", book.Isbn10);
+                command.Parameters.AddWithValue("@ISBN_13", book.Isbn13);
                 command.Parameters.AddWithValue("@CREATEDAT", book.CreatedAt);
                 command.Parameters.AddWithValue("@UPDATEDAT", book.UpdatedAt);
 
@@ -196,68 +202,6 @@ namespace Library_Console.Repository
             }
         }
 
-        public Books UpdateBookById(int id)
-        {
-            const string updateBook = "UPDATE BOOK SET " +
-                "TITLE = @TITLE, " +
-                "AUTHOR = @AUTHOR, " +
-                "PAGES = @PAGES, " +
-                "PUBLISHER = @PUBLISHER, " +
-                "ISBN_10 = @ISBN_10, " +
-                "ISBN_13 = @ISBN_13, " +
-                "LANGUAGE = @LANGUAGE, " +
-                "UPDATEDAT = @UPDATEDAT " +
-                "WHERE ID = @ID";
-
-            var book = new Books();
-
-            Console.WriteLine("Titulo: ");
-            book.Title = Console.ReadLine()!;
-
-            Console.WriteLine("Autor: ");
-            book.Author = Console.ReadLine()!;
-
-            Console.WriteLine("Páginas: ");
-            book.Pages = Console.ReadLine()!;
-
-            Console.WriteLine("Editora: ");
-            book.Publisher = Console.ReadLine()!;
-
-            Console.WriteLine("ISBN 10: ");
-            book.Isbn10 = Console.ReadLine()!;
-
-            Console.WriteLine("ISBN 13: ");
-            book.Isbn13 = Console.ReadLine()!;
-
-            Console.WriteLine("Idioma: ");
-            book.Language = Console.ReadLine()!;
-
-            book.UpdatedAt = DateTime.Now;
-
-            using var command = new SqlCommand(updateBook, _connection);
-            try
-            {
-                command.Parameters.AddWithValue("@ID", id);
-                command.Parameters.AddWithValue("@TITLE", book.Title);
-                command.Parameters.AddWithValue("@AUTHOR", book.Author);
-                command.Parameters.AddWithValue("@PAGES", book.Pages);
-                command.Parameters.AddWithValue("@PUBLISHER", book.Publisher);
-                command.Parameters.AddWithValue("@ISBN_10", book.Isbn10);
-                command.Parameters.AddWithValue("@ISBN_13", book.Isbn13);
-                command.Parameters.AddWithValue("@LANGUAGE", book.Language);
-                command.Parameters.AddWithValue("@UPDATEDAT", DateTime.Now);
-
-                command.ExecuteNonQuery();
-
-                return null!;
-            }
-            catch (Exception ex)
-            {
-                Console.WriteLine(ex);
-                return null!;
-            }
-        }
-
         public Books UpdateBookByTitle(string title)
         {
             const string updateBookByTitle = "UPDATE BOOK SET " +
@@ -265,9 +209,10 @@ namespace Library_Console.Repository
                 "AUTHOR = @AUTHOR, " +
                 "PAGES = @PAGES, " +
                 "PUBLISHER = @PUBLISHER, " +
+                "LANGUAGE = @LANGUAGE, " +
+                "BOOK_CONDITION = @BOOK_CONDITION, " +
                 "ISBN_10 = @ISBN_10, " +
                 "ISBN_13 = @ISBN_13, " +
-                "LANGUAGE = @LANGUAGE, " +
                 "UPDATEDAT = @UPDATEDAT " +
                 "WHERE TITLE = @TITLE";
 
@@ -285,14 +230,17 @@ namespace Library_Console.Repository
             Console.WriteLine("Editora: ");
             book.Publisher = Console.ReadLine()!;
 
+            Console.WriteLine("Condição: ");
+            book.BookCondition = Console.ReadLine()!;
+
+            Console.WriteLine("Idioma");
+            book.Language = Console.ReadLine()!;
+
             Console.WriteLine("ISBN 10: ");
             book.Isbn10 = Console.ReadLine()!;
 
             Console.WriteLine("ISBN 13: ");
             book.Isbn13 = Console.ReadLine()!;
-
-            Console.WriteLine("Idioma");
-            book.Language = Console.ReadLine()!;
 
             using var command = new SqlCommand(updateBookByTitle, _connection);
             try
@@ -302,9 +250,10 @@ namespace Library_Console.Repository
                 command.Parameters.AddWithValue("@AUTHOR", book.Author);
                 command.Parameters.AddWithValue("@PAGES", book.Pages);
                 command.Parameters.AddWithValue("@PUBLISHER", book.Publisher);
+                command.Parameters.AddWithValue("@LANGUAGE", book.Language);
+                command.Parameters.AddWithValue("@BOOK_CONDITION", book.BookCondition);
                 command.Parameters.AddWithValue("@ISBN_10", book.Isbn10);
                 command.Parameters.AddWithValue("@ISBN_13", book.Isbn13);
-                command.Parameters.AddWithValue("@LANGUAGE", book.Language);
                 command.Parameters.AddWithValue("@UPDATEDAT", DateTime.Now);
 
                 command.ExecuteNonQuery();
@@ -318,26 +267,19 @@ namespace Library_Console.Repository
             }
         }
 
-        public Books RemoveBookById(int id)
+        public Books ActivateBookByTitle(string title)
         {
+            const string removeBook = "UPDATE BOOK " +
+                "SET BOOK_STATUS = 1 " +
+                "WHERE TITLE = @TITLE";
+
+            using var command = new SqlCommand(removeBook, _connection);
             try
             {
-                const string removeBook = "DELETE FROM BOOK " +
-                    "WHERE ID = @ID";
+                command.Parameters.AddWithValue("@TITLE", title);
+                command.ExecuteNonQuery();
 
-                using var command = new SqlCommand(removeBook, _connection);
-                try
-                {
-                    command.Parameters.AddWithValue("@ID", id);
-                    command.ExecuteNonQuery();
-
-                    return null!;
-                }
-                catch (Exception ex)
-                {
-                    Console.WriteLine(ex);
-                    return null!;
-                }
+                return null!;
             }
             catch (Exception ex)
             {
@@ -346,10 +288,10 @@ namespace Library_Console.Repository
             }
         }
 
-        public Books RemoveBookByTitle(string title)
+        public Books InactivateBookByTitle(string title)
         {
-            const string removeBook = "UPDATE BOOK SET " +
-                "STATUS = 0" +
+            const string removeBook = "UPDATE BOOK " +
+                "SET BOOK_STATUS = 0 " +
                 "WHERE TITLE = @TITLE";
 
             using var command = new SqlCommand(removeBook, _connection);

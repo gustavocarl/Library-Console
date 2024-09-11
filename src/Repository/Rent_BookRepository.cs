@@ -10,60 +10,83 @@ namespace Library_Console.Repository
         public Rent_BookRepository(SqlConnection connection)
         {
             _connection = connection;
-        } 
+        }
 
         public Rent_Books GetAllRentedBooks()
         {
             return null!;
         }
-        public Rent_Books GetRentedBooksById()
-        {
-            return null!;
-        }
 
-        public Rent_Books GetRentedBooksByUserDocument(string document)
+        public Rent_Books SaveRentBook(string document, string title)
         {
-            return null!;
-        }
+            int readerId = 0, bookId = 0;
 
-        public Rent_Books GetRentedBooksByBookName(string bookName)
-        {
-            return null!;
-        }
+            const string queryReaderId = "SELECT ID, DOCUMENT " +
+                " FROM READER " +
+                "WHERE DOCUMENT = @DOCUMENT";
 
-        public Rent_Books SaveRentedBook()
-        {
-            return null!;
-        }
+            const string queryBookId = "SELECT ID, TITLE " +
+                "FROM BOOK " +
+                "WHERE TITLE = @TITLE";
 
-        public Rent_Books UpdateRentedBookById()
-        {
-            return null!;
-        }
+            const string createRentBook = "INSERT INTO RENT_BOOK ( " +
+                "READER_ID, BOOK_ID, RENTED, RENTAL_DATE, " +
+                "RETURN_DATE, RETURN_STATUS, CREATEDAT, UPDATEDAT " +
+                ") VALUES ( " +
+                "@READER_ID, @BOOK_ID, @RENTED, @RENTAL_DATE," +
+                "@RETURN_DATE, @RETURN_STATUS, @CREATEDAT, @UPDATEDAT ) ";
 
-        public Rent_Books UpdateRentedBookByUserDocument()
-        {
-            return null!;
-        }
+            using var cmdQueryReaderId = new SqlCommand(queryReaderId, _connection);
+            cmdQueryReaderId.Parameters.AddWithValue("@DOCUMENT", document);
 
-        public Rent_Books UpdateRentedBookByBookName()
-        {
-            return null!;
-        }
+            SqlDataReader rdReaderId = cmdQueryReaderId.ExecuteReader();
 
-        public Rent_Books RemoveRentedBookById()
-        {
-            return null!;
-        }
+            if (rdReaderId.HasRows)
+            {
+                if (rdReaderId.Read())
+                {
+                    readerId = Convert.ToInt32(rdReaderId.GetInt32(0));
+                }
+            }
 
-        public Rent_Books RemoveRentedBookByUserDocument()
-        {
-            return null!;
-        }
+            rdReaderId.Close();
 
-        public Rent_Books RemoveRentedBookByBookName()
-        {
-            return null!;
+            using var cmdQueryBookId = new SqlCommand(queryBookId, _connection);
+            cmdQueryBookId.Parameters.AddWithValue("@TITLE", title);
+
+            SqlDataReader rdBookId = cmdQueryBookId.ExecuteReader();
+
+            if (rdBookId.HasRows)
+            {
+                if (rdBookId.Read())
+                {
+                    bookId = Convert.ToInt32(rdBookId.GetInt32(0));
+                }
+            }
+
+            rdBookId.Close();
+
+            using var command = new SqlCommand(createRentBook, _connection);
+            try
+            {
+                
+                command.Parameters.AddWithValue("@READER_ID", readerId);
+                command.Parameters.AddWithValue("@BOOK_ID", bookId);
+                command.Parameters.AddWithValue("@RENTED", true);
+                command.Parameters.AddWithValue("@RENTAL_DATE", DateTime.Now.Date);
+                command.Parameters.AddWithValue("@RETURN_DATE", DateTime.Now.AddMonths(1));
+                command.Parameters.AddWithValue("@RETURN_STATUS", "Alugado");
+                command.Parameters.AddWithValue("@CREATEDAT", DateTime.Now);
+                command.Parameters.AddWithValue("@UPDATEDAT", DateTime.Now);
+
+                command.ExecuteNonQuery();
+                return null!;
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine(ex);
+                return null!;
+            }
         }
     }
 }

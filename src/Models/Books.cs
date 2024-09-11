@@ -20,7 +20,7 @@
 
         public string BookCondition { get; set; } = string.Empty;
 
-        public string BookStatus { get; set; } = string.Empty;
+        public bool BookStatus { get; set; } = true;
 
         public DateTime CreatedAt { get; set; }
 
