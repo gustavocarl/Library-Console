@@ -308,5 +308,52 @@ namespace Library_Console.Repository
                 return null!;
             }
         }
+
+        public Books AlterBookStatus(string title)
+        {
+            const string updateBookStatus = "UPDATE BOOK " +
+                "SET BOOK_STATUS = 1 " +
+                "WHERE TITLE = @TITLE";
+
+            using var command = new SqlCommand(updateBookStatus, _connection);
+            try
+            {
+                command.Parameters.AddWithValue("@TITLE", title);
+                command.ExecuteNonQuery();
+                return null!;
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine(ex);
+                return null!;
+            }
+        }
+
+        public Books AlterBookCondition(string title)
+        {
+            const string updateBookCondition = "UPDATE BOOK " +
+                "SET BOOK_CONDITION = @CONDITION " +
+                "WHERE TITLE = @TITLE";
+
+            Console.WriteLine("Condição do livro: ");
+            string condition = Console.ReadLine()!;
+            
+            using var command = new SqlCommand(updateBookCondition, _connection);
+            try
+            {
+                command.Parameters.AddWithValue("@CONDITION", condition);
+                command.Parameters.AddWithValue("@TITLE", title);
+
+                command.ExecuteNonQuery();
+
+                return null!;
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine(ex);
+                return null!;
+            }
+
+        }
     }
 }
