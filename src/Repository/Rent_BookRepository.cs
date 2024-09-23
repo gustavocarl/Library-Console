@@ -135,7 +135,7 @@ namespace Library_Console.Repository
                 SqlDataReader reader = command.ExecuteReader();
 
                 Console.WriteLine($"Lista de alugueis de {title}");
-                
+
                 while (reader.Read())
                 {
                     Console.WriteLine($"Id: {reader.GetInt32(0)}");
@@ -159,7 +159,7 @@ namespace Library_Console.Repository
                 Console.WriteLine("Pressione ENTER para continuar...");
 
                 reader.Close();
-                
+
                 return null!;
             }
             catch (Exception ex)
@@ -169,19 +169,8 @@ namespace Library_Console.Repository
             }
         }
 
-
         public Rent_Books SaveRentBook(string document, string title)
         {
-            int readerId = 0, bookId = 0;
-
-            const string queryReaderId = "SELECT ID, DOCUMENT " +
-                " FROM READER " +
-                "WHERE DOCUMENT = @DOCUMENT";
-
-            const string queryBookId = "SELECT ID, TITLE " +
-                "FROM BOOK " +
-                "WHERE TITLE = @TITLE";
-
             const string createRentBook = "INSERT INTO RENT_BOOK ( " +
                 "READER_ID, BOOK_ID, RENTED, RENTAL_DATE, " +
                 "RETURN_DATE, RETURN_STATUS, CREATEDAT, UPDATEDAT " +
@@ -189,35 +178,11 @@ namespace Library_Console.Repository
                 "@READER_ID, @BOOK_ID, @RENTED, @RENTAL_DATE," +
                 "@RETURN_DATE, @RETURN_STATUS, @CREATEDAT, @UPDATEDAT ) ";
 
-            using var cmdQueryReaderId = new SqlCommand(queryReaderId, _connection);
-            cmdQueryReaderId.Parameters.AddWithValue("@DOCUMENT", document);
+            var readerRepository = new ReaderRepository(_connection);
+            int readerId = readerRepository.GetReaderId(document);
 
-            SqlDataReader rdReaderId = cmdQueryReaderId.ExecuteReader();
-
-            if (rdReaderId.HasRows)
-            {
-                if (rdReaderId.Read())
-                {
-                    readerId = Convert.ToInt32(rdReaderId.GetInt32(0));
-                }
-            }
-
-            rdReaderId.Close();
-
-            using var cmdQueryBookId = new SqlCommand(queryBookId, _connection);
-            cmdQueryBookId.Parameters.AddWithValue("@TITLE", title);
-
-            SqlDataReader rdBookId = cmdQueryBookId.ExecuteReader();
-
-            if (rdBookId.HasRows)
-            {
-                if (rdBookId.Read())
-                {
-                    bookId = Convert.ToInt32(rdBookId.GetInt32(0));
-                }
-            }
-
-            rdBookId.Close();
+            var bookRepository = new BookRepository(_connection);
+            int bookId = bookRepository.GetBookId(title);
 
             using var command = new SqlCommand(createRentBook, _connection);
             try
@@ -243,45 +208,12 @@ namespace Library_Console.Repository
 
         public Rent_Books ReturnRentedBook(string document, string title)
         {
-            int readerId = 0, bookId = 0;
 
-            const string queryReaderId = "SELECT ID, DOCUMENT " +
-                "FROM READER " +
-                "WHERE DOCUMENT = @DOCUMENT";
+            var readerRepository = new ReaderRepository(_connection);
+            int readerId = readerRepository.GetReaderId(document);
 
-            using var cmdReaderId = new SqlCommand(queryReaderId, _connection);
-            cmdReaderId.Parameters.AddWithValue("@DOCUMENT", document);
-
-            SqlDataReader rdreaderId = cmdReaderId.ExecuteReader();
-
-            if (rdreaderId.HasRows)
-            {
-                if (rdreaderId.Read())
-                {
-                    readerId = Convert.ToInt32(rdreaderId.GetInt32(0));
-                }
-            }
-
-            rdreaderId.Close();
-
-            const string queryBookId = "SELECT ID, TITLE " +
-                "FROM BOOK " +
-                "WHERE TITLE = @TITLE";
-
-            using var cmdBookId = new SqlCommand(queryBookId, _connection);
-            cmdBookId.Parameters.AddWithValue("@TITLE", title);
-
-            SqlDataReader rdBookId = cmdBookId.ExecuteReader();
-
-            if (rdBookId.HasRows)
-            {
-                if (rdBookId.Read())
-                {
-                    bookId = Convert.ToInt32(rdBookId.GetInt32(0));
-                }
-            }
-
-            rdBookId.Close();
+            var bookRepository = new BookRepository(_connection);
+            int bookId = bookRepository.GetBookId(title);
 
             const string updateRentedBook = "UPDATE RENT_BOOK " +
                 "SET RENTED = 0, " +

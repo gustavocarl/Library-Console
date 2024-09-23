@@ -14,6 +14,5 @@ internal class Program
         connection.Open();
 
         Menu.MainMenu(connection);
-
     }
 }

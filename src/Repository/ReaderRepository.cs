@@ -1,5 +1,7 @@
 ﻿using Library_Console.Models;
+using MaxMind.Db;
 using System.Data.SqlClient;
+using System.Reflection.Metadata;
 
 namespace Library_Console.Repository
 {
@@ -82,24 +84,38 @@ namespace Library_Console.Repository
             }
         }
 
-        public Readers SaveReader()
+        public int GetReaderId(string document)
         {
-            var reader = new Readers();
+            int id = 0;
+            const string queryReaderId = "SELECT ID, DOCUMENT " +
+                " FROM READER " +
+                "WHERE DOCUMENT = @DOCUMENT";
 
+            using var command= new SqlCommand(queryReaderId, _connection);
+            command.Parameters.AddWithValue("@DOCUMENT", document);
+
+            SqlDataReader reader = command.ExecuteReader();
+
+            if (reader.HasRows)
+            {
+                if (reader.Read())
+                {
+                    id = Convert.ToInt32(reader.GetInt32(0));
+                }
+            }
+
+            reader.Close();
+
+            return id;
+        }
+
+        public Readers SaveReader(Readers reader)
+        {
             const string createReader = "INSERT INTO READER ( " +
                 "DOCUMENT, FIRST_NAME, LAST_NAME, " +
                 "STATUS, CREATEDAT, UPDATEDAT ) VALUES ( " +
                 "@DOCUMENT, @FIRST_NAME, @LAST_NAME, " +
                 "@STATUS, @CREATEDAT, @UPDATEDAT )";
-
-            Console.WriteLine("CPF: ");
-            reader.Document = Console.ReadLine()!;
-
-            Console.WriteLine("Primeiro Nome: ");
-            reader.FirstName = Console.ReadLine()!;
-
-            Console.WriteLine("Último Nome: ");
-            reader.LastName = Console.ReadLine()!;
 
             using var command = new SqlCommand(createReader, _connection);
             try
@@ -122,7 +138,7 @@ namespace Library_Console.Repository
             }
         }
 
-        public Readers UpdateReaderByDocument(string document)
+        public Readers UpdateReaderByDocument(Readers reader)
         {
             const string updateReaderByDocument = "UPDATE READER " +
                 "SET FIRST_NAME = @FIRST_NAME, " +
@@ -130,21 +146,13 @@ namespace Library_Console.Repository
                 "UPDATEDAT = @UPDATEDAT " +
                 "WHERE DOCUMENT = @DOCUMENT ";
 
-            var reader = new Readers();
-
-            Console.WriteLine("Primeiro nome: ");
-            reader.FirstName = Console.ReadLine()!; 
-
-            Console.WriteLine("Último nome: ");
-            reader.LastName = Console.ReadLine()!;
-
             using var command = new SqlCommand(updateReaderByDocument, _connection);
             try
             {
                 command.Parameters.AddWithValue("@FIRST_NAME", reader.FirstName);
                 command.Parameters.AddWithValue("@LAST_NAME", reader.LastName);
                 command.Parameters.AddWithValue("@UPDATEDAT", DateTime.Now);
-                command.Parameters.AddWithValue("@DOCUMENT", document);
+                command.Parameters.AddWithValue("@DOCUMENT", reader.Document);
 
                 command.ExecuteNonQuery();
 
@@ -157,38 +165,41 @@ namespace Library_Console.Repository
             }
         }
 
-        public Readers ActivateReaderByDocument(string document)
+        public Readers ActivateReaderByDocument(Readers reader)
         {
             const string activateReaderByDocument = "UPDATE READER " +
-                "SET STATUS = 1 " +
+                "SET STATUS = 1," +
+                "UPDATEDAT = @UPDATEDAT " +
                 "WHERE DOCUMENT = @DOCUMENT";
 
             using var command = new SqlCommand(activateReaderByDocument, _connection);
             try
             {
-                command.Parameters.AddWithValue("@DOCUMENT", document);
+                command.Parameters.AddWithValue("@DOCUMENT", reader.Document);
+                command.Parameters.AddWithValue("@UPDATEDAT", DateTime.Now);
 
                 command.ExecuteNonQuery();
                 return null!;
             }
-            catch(Exception ex)
+            catch (Exception ex)
             {
                 Console.WriteLine(ex);
                 return null!;
             }
         }
 
-        public Readers InactivateReaderByDocument(string document)
+        public Readers InactivateReaderByDocument(Readers reader)
         {
-
             const string inactivateReaderByDocument = "UPDATE READER " +
-                "SET STATUS = 0 " +
+                "SET STATUS = 0," +
+                "UPDATEDAT = @UPDATEDAT " +
                 "WHERE DOCUMENT = @DOCUMENT";
 
             using var command = new SqlCommand(inactivateReaderByDocument, _connection);
             try
             {
-                command.Parameters.AddWithValue("@DOCUMENT", document);
+                command.Parameters.AddWithValue("@DOCUMENT", reader.Document);
+                command.Parameters.AddWithValue("@UPDATEDAT", DateTime.Now);
 
                 command.ExecuteNonQuery();
                 return null!;

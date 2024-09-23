@@ -1,6 +1,6 @@
 ﻿using Library_Console.Repository;
+using Library_Console.Services;
 using System.Data.SqlClient;
-using System.Runtime.ConstrainedExecution;
 
 namespace Library_Console.Menu
 {
@@ -45,8 +45,8 @@ namespace Library_Console.Menu
         {
             var readerRepository = new ReaderRepository(connection);
             var bookRepository = new BookRepository(connection);
-
-            string cpf, title, author;
+            var readerService = new ReaderService(readerRepository);
+            var bookService = new BookService(bookRepository);
 
             Console.Clear();
             Console.WriteLine("=====================================");
@@ -78,87 +78,70 @@ namespace Library_Console.Menu
                     break;
 
                 case "1":
-                    readerRepository.SaveReader();
+                    readerService.SaveReader();
                     AdministrativeMenu(connection);
                     break;
 
                 case "2":
-                    bookRepository.SaveBook();
+                    bookService.SaveBook();
                     AdministrativeMenu(connection);
                     break;
 
                 case "3":
-                    readerRepository.GetAllReaders();
+                    readerService.GetAllReaders();
                     Console.ReadLine();
                     AdministrativeMenu(connection);
                     break;
 
                 case "4":
-                    bookRepository.GetAllBooks();
+                    bookService.GetAllBooks();
                     Console.ReadLine();
                     AdministrativeMenu(connection);
                     break;
 
                 case "5":
-                    Console.WriteLine("CPF: ");
-                    cpf = Console.ReadLine()!;
-                    readerRepository.GetReadersByDocument(cpf);
+                    readerService.GetReaderByDocument();
+                    Console.ReadLine();
                     AdministrativeMenu(connection);
                     break;
 
                 case "6":
-                    Console.WriteLine("Título: ");
-                    title = Console.ReadLine()!;
-                    bookRepository.GetBookByTitle(title);
+                    bookService.GetBookByTitle();
                     AdministrativeMenu(connection);
                     break;
 
                 case "7":
-                    Console.WriteLine("Autor: ");
-                    author = Console.ReadLine()!;
-                    bookRepository.GetBookByAuthor(author);
+                    bookService.GetBookByAuthor();
                     AdministrativeMenu(connection);
                     break;
 
                 case "8":
-                    Console.WriteLine("CPF: ");
-                    cpf = Console.ReadLine()!;
-                    readerRepository.UpdateReaderByDocument(cpf);
+                    readerService.UpdatedReader();
                     AdministrativeMenu(connection);
                     break;
 
                 case "9":
-                    Console.WriteLine("Título: ");
-                    title = Console.ReadLine()!;
-                    bookRepository.UpdateBookByTitle(title);
+                    bookService.UpdatedBook();
                     AdministrativeMenu(connection);
                     break;
 
                 case "10":
-                    Console.WriteLine("CPF: ");
-                    cpf = Console.ReadLine()!;
-                    readerRepository.ActivateReaderByDocument(cpf);
+                    readerService.ActiveReader();
                     AdministrativeMenu(connection);
                     break;
 
                 case "11":
-                    Console.WriteLine("CPF: ");
-                    cpf = Console.ReadLine()!;
-                    readerRepository.InactivateReaderByDocument(cpf);
+                    readerService.InactiveReader();
                     AdministrativeMenu(connection);
                     break;
 
                 case "12":
-                    Console.WriteLine("Título: ");
-                    title = Console.ReadLine()!;
-                    bookRepository.ActivateBookByTitle(title);
+                    bookService.ActiveBook();
                     AdministrativeMenu(connection);
                     break;
 
                 case "13":
-                    Console.WriteLine("Título: ");
-                    title = Console.ReadLine()!;
-                    bookRepository.InactivateBookByTitle(title);
+                    bookService.AlterBookCondition();
                     AdministrativeMenu(connection);
                     break;
 
@@ -178,6 +161,7 @@ namespace Library_Console.Menu
 
             var rentBookRepository = new Rent_BookRepository(connection);
             var bookRepository = new BookRepository(connection);
+            var bookService = new BookService(bookRepository);
 
             Console.Clear();
             Console.WriteLine("==========================================================");
@@ -243,16 +227,13 @@ namespace Library_Console.Menu
                     break;
 
                 case "6":
-                    Console.WriteLine("Título: ");
-                    title = Console.ReadLine()!;
-                    bookRepository.AlterBookStatus(title);
+                    ;
+                    bookService.AlterBookStatus();
                     RentMenu(connection);
                     break;
 
                 case "7":
-                    Console.WriteLine("Título: ");
-                    title = Console.ReadLine()!;
-                    bookRepository.AlterBookCondition(title);
+                    bookService.AlterBookCondition();
                     RentMenu(connection);
                     break;
 
