@@ -208,7 +208,6 @@ namespace Library_Console.Repository
 
         public Rent_Books ReturnRentedBook(string document, string title)
         {
-
             var readerRepository = new ReaderRepository(_connection);
             int readerId = readerRepository.GetReaderId(document);
 

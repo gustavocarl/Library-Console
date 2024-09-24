@@ -18,9 +18,9 @@
 
         public string Language { get; set; } = string.Empty;
 
-        public string BookCondition { get; set; } = string.Empty;
+        public string Condition { get; set; } = string.Empty;
 
-        public bool BookStatus { get; set; } = true;
+        public bool Status { get; set; } = true;
 
         public DateTime CreatedAt { get; set; }
 

@@ -46,8 +46,11 @@ namespace Library_Console.Services
         {
             var book = new Books();
 
-            Console.WriteLine("Titulo: ");
-            book.Title = Console.ReadLine()!;
+            do
+            {
+                Console.WriteLine("Titulo: ");
+                book.Title = Console.ReadLine()!;
+            } while (book.Title.Length < 3);
 
             Console.WriteLine("Autor: ");
             book.Author = Console.ReadLine()!;
@@ -62,7 +65,7 @@ namespace Library_Console.Services
             book.Language = Console.ReadLine()!;
 
             Console.WriteLine("Condição: ");
-            book.BookCondition = Console.ReadLine()!;
+            book.Condition = Console.ReadLine()!;
 
             Console.WriteLine("ISBN 10: ");
             book.Isbn10 = Console.ReadLine()!;
@@ -99,7 +102,7 @@ namespace Library_Console.Services
             book.Publisher = Console.ReadLine()!;
 
             Console.WriteLine("Condição: ");
-            book.BookCondition = Console.ReadLine()!;
+            book.Condition = Console.ReadLine()!;
 
             Console.WriteLine("Idioma");
             book.Language = Console.ReadLine()!;
@@ -159,7 +162,7 @@ namespace Library_Console.Services
             book.Title = Console.ReadLine()!;
 
             Console.WriteLine("Condição: ");
-            book.BookCondition = Console.ReadLine()!;
+            book.Condition = Console.ReadLine()!;
 
             _bookRepository.AlterBookCondition(book);
 

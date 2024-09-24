@@ -1,7 +1,5 @@
 ﻿using Library_Console.Models;
-using MaxMind.Db;
 using System.Data.SqlClient;
-using System.Reflection.Metadata;
 
 namespace Library_Console.Repository
 {
@@ -24,7 +22,6 @@ namespace Library_Console.Repository
             try
             {
                 SqlDataReader reader = command.ExecuteReader();
-                Console.WriteLine("Lista de Leitores: \n");
                 while (reader.Read())
                 {
                     Console.WriteLine($"Id:             {reader.GetInt32(0)}");
@@ -36,8 +33,6 @@ namespace Library_Console.Repository
                     Console.WriteLine($"Atualizado:     {reader.GetDateTime(6)}");
                     Console.WriteLine();
                 }
-
-                Console.WriteLine("Pressione ENTER para continuar...");
                 reader.Close();
 
                 return null!;
@@ -91,7 +86,7 @@ namespace Library_Console.Repository
                 " FROM READER " +
                 "WHERE DOCUMENT = @DOCUMENT";
 
-            using var command= new SqlCommand(queryReaderId, _connection);
+            using var command = new SqlCommand(queryReaderId, _connection);
             command.Parameters.AddWithValue("@DOCUMENT", document);
 
             SqlDataReader reader = command.ExecuteReader();
@@ -105,8 +100,28 @@ namespace Library_Console.Repository
             }
 
             reader.Close();
-
             return id;
+        }
+
+        public bool GetReaderDocument(string document)
+        {
+            bool documentExist = false;
+            const string queryReaderDocument = "SELECT DOCUMENT " +
+              "FROM READER " +
+              "WHERE DOCUMENT = @DOCUMENT";
+
+            using var command = new SqlCommand(queryReaderDocument, _connection);
+            command.Parameters.AddWithValue("@DOCUMENT", document);
+
+            SqlDataReader reader = command.ExecuteReader();
+
+            if (reader.HasRows)
+            {
+                documentExist = true;
+            }
+
+            reader.Close();
+            return documentExist;
         }
 
         public Readers SaveReader(Readers reader)
@@ -128,7 +143,6 @@ namespace Library_Console.Repository
                 command.Parameters.AddWithValue("@UPDATEDAT", DateTime.Now);
 
                 command.ExecuteScalar();
-
                 return null!;
             }
             catch (Exception ex)
@@ -155,7 +169,6 @@ namespace Library_Console.Repository
                 command.Parameters.AddWithValue("@DOCUMENT", reader.Document);
 
                 command.ExecuteNonQuery();
-
                 return null!;
             }
             catch (Exception ex)

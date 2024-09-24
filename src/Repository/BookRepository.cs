@@ -1,6 +1,5 @@
 ﻿using Library_Console.Models;
 using System.Data.SqlClient;
-using System.Net;
 
 namespace Library_Console.Repository
 {
@@ -139,7 +138,6 @@ namespace Library_Console.Repository
             }
         }
 
-
         public int GetBookId(string title)
         {
             int id = 0;
@@ -188,7 +186,7 @@ namespace Library_Console.Repository
                 command.Parameters.AddWithValue("@PAGES", book.Pages);
                 command.Parameters.AddWithValue("@PUBLISHER", book.Publisher);
                 command.Parameters.AddWithValue("@LANGUAGE", book.Language);
-                command.Parameters.AddWithValue("@BOOK_CONDITION", book.BookCondition);
+                command.Parameters.AddWithValue("@BOOK_CONDITION", book.Condition);
                 command.Parameters.AddWithValue("@BOOK_STATUS", true);
                 command.Parameters.AddWithValue("@ISBN_10", book.Isbn10);
                 command.Parameters.AddWithValue("@ISBN_13", book.Isbn13);
@@ -228,7 +226,7 @@ namespace Library_Console.Repository
                 command.Parameters.AddWithValue("@PAGES", book.Pages);
                 command.Parameters.AddWithValue("@PUBLISHER", book.Publisher);
                 command.Parameters.AddWithValue("@LANGUAGE", book.Language);
-                command.Parameters.AddWithValue("@BOOK_CONDITION", book.BookCondition);
+                command.Parameters.AddWithValue("@BOOK_CONDITION", book.Condition);
                 command.Parameters.AddWithValue("@ISBN_10", book.Isbn10);
                 command.Parameters.AddWithValue("@ISBN_13", book.Isbn13);
                 command.Parameters.AddWithValue("@UPDATEDAT", DateTime.Now);
@@ -315,7 +313,7 @@ namespace Library_Console.Repository
             using var command = new SqlCommand(updateBookCondition, _connection);
             try
             {
-                command.Parameters.AddWithValue("@CONDITION", book.BookCondition);
+                command.Parameters.AddWithValue("@CONDITION", book.Condition);
                 command.Parameters.AddWithValue("@TITLE", book.Title);
 
                 command.ExecuteNonQuery();
