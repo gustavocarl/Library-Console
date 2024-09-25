@@ -60,12 +60,11 @@ namespace Library_Console.Menu
             Console.WriteLine("5  - Listar leitor pelo CPF");
             Console.WriteLine("6  - Listar livro pelo título");
             Console.WriteLine("7  - Listar livros pelo autor");
+            Console.WriteLine("7  - Listar livros pelo autor");
             Console.WriteLine("8  - Alterar dados do leitor pelo CPF");
             Console.WriteLine("9  - Alterar dados do livro");
-            Console.WriteLine("10 - Ativar leitor pelo CPF");
-            Console.WriteLine("11 - Inativar leitor pelo CPF");
-            Console.WriteLine("12 - Ativar livro pelo título");
-            Console.WriteLine("13 - Inativar livro pelo título");
+            Console.WriteLine("10 - Alterar status do leitor");
+            Console.WriteLine("11 - Altera status do livro");
             Console.WriteLine("=====================================");
             Console.WriteLine("0 - Retornar ao menu anterior");
             Console.WriteLine("=====================================");
@@ -126,22 +125,12 @@ namespace Library_Console.Menu
                     break;
 
                 case "10":
-                    readerService.ActiveReader();
+                    readerService.AlterReaderStatus();
                     AdministrativeMenu(connection);
                     break;
 
                 case "11":
-                    readerService.InactiveReader();
-                    AdministrativeMenu(connection);
-                    break;
-
-                case "12":
                     bookService.ActiveBook();
-                    AdministrativeMenu(connection);
-                    break;
-
-                case "13":
-                    bookService.AlterBookCondition();
                     AdministrativeMenu(connection);
                     break;
 
@@ -173,8 +162,7 @@ namespace Library_Console.Menu
             Console.WriteLine("3 - Listar todos os livros alugados");
             Console.WriteLine("4 - Listar todos os livros alugados com situação em atraso");
             Console.WriteLine("5 - Listar livro alugado pelo título");
-            Console.WriteLine("6 - Alterar status do livro");
-            Console.WriteLine("7 - Alterar condição do livro");
+            Console.WriteLine("6 - Alterar condição do livro");
             Console.WriteLine("==========================================================");
             Console.WriteLine("0 - Retornar ao menu anterior");
             Console.WriteLine("==========================================================");
@@ -227,12 +215,6 @@ namespace Library_Console.Menu
                     break;
 
                 case "6":
-                    ;
-                    bookService.AlterBookStatus();
-                    RentMenu(connection);
-                    break;
-
-                case "7":
                     bookService.AlterBookCondition();
                     RentMenu(connection);
                     break;

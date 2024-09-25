@@ -51,18 +51,20 @@ namespace Library_Console.Repository
             }
         }
 
-        public Books GetBookByTitle(Books book)
+        public Books GetBookByTitleAndAuthor(Books book)
         {
             const string queryBookTitle = " SELECT ID, TITLE, AUTHOR, " +
                 "PAGES, PUBLISHER, LANGUAGE, BOOK_CONDITION, " +
                 "BOOK_STATUS, ISBN_10, ISBN_13, CREATEDAT, UPDATEDAT " +
                 "FROM BOOK " +
-                "WHERE TITLE = @TITLE";
+                "WHERE TITLE = @TITLE " +
+                "AND AUTHOR = @AUTHOR ";
 
             using var command = new SqlCommand(queryBookTitle, _connection);
             try
             {
                 command.Parameters.AddWithValue("@TITLE", book.Title);
+                command.Parameters.AddWithValue("@AUTHOR", book.Author);
 
                 SqlDataReader reader = command.ExecuteReader();
                 while (reader.Read())
@@ -138,6 +140,48 @@ namespace Library_Console.Repository
             }
         }
 
+        public bool GetExistingBookTitle(string title)
+        {
+            bool bookTitleExist = false;
+
+            const string queryBookTitle = "SELECT TITLE FROM BOOK " +
+                "WHERE TITLE = @TITLE";
+
+            var command = new SqlCommand(queryBookTitle, _connection);
+            command.Parameters.AddWithValue("@TITLE", title);
+
+            SqlDataReader reader = command.ExecuteReader();
+            if(reader.HasRows)
+            {
+                bookTitleExist = true;
+            }
+
+            reader.Close();
+
+            return bookTitleExist;
+        }
+
+        public bool GetExistingBookAuthor(string author)
+        {
+            bool bookAuthorExist = false;
+
+            const string queryBookTitle = "SELECT AUTHOR FROM BOOK " +
+                "WHERE AUTHOR = @AUTHOR";
+
+            var command = new SqlCommand(queryBookTitle, _connection);
+            command.Parameters.AddWithValue("@AUTHOR", author);
+
+            SqlDataReader reader = command.ExecuteReader();
+            if (reader.HasRows)
+            {
+                bookAuthorExist = true;
+            }
+
+            reader.Close();
+
+            return bookAuthorExist;
+        }
+
         public int GetBookId(string title)
         {
             int id = 0;
@@ -203,76 +247,26 @@ namespace Library_Console.Repository
             }
         }
 
-        public Books UpdateBookByTitle(Books book, string title)
+        public Books UpdateBookByTitle(Books book)
         {
             const string updateBookByTitle = "UPDATE BOOK SET " +
-                "TITLE = @NEW_TITLE, " +
-                "AUTHOR = @AUTHOR, " +
                 "PAGES = @PAGES, " +
                 "PUBLISHER = @PUBLISHER, " +
-                "LANGUAGE = @LANGUAGE, " +
                 "BOOK_CONDITION = @BOOK_CONDITION, " +
-                "ISBN_10 = @ISBN_10, " +
-                "ISBN_13 = @ISBN_13, " +
                 "UPDATEDAT = @UPDATEDAT " +
-                "WHERE TITLE = @TITLE";
+                "WHERE TITLE = @TITLE " +
+                "AND AUTHOR = @AUTHOR";
 
             using var command = new SqlCommand(updateBookByTitle, _connection);
             try
             {
-                command.Parameters.AddWithValue("@TITLE", title);
-                command.Parameters.AddWithValue("@NEW_TITLE", book.Title);
+                command.Parameters.AddWithValue("@TITLE", book.Title);
                 command.Parameters.AddWithValue("@AUTHOR", book.Author);
                 command.Parameters.AddWithValue("@PAGES", book.Pages);
                 command.Parameters.AddWithValue("@PUBLISHER", book.Publisher);
-                command.Parameters.AddWithValue("@LANGUAGE", book.Language);
                 command.Parameters.AddWithValue("@BOOK_CONDITION", book.Condition);
-                command.Parameters.AddWithValue("@ISBN_10", book.Isbn10);
-                command.Parameters.AddWithValue("@ISBN_13", book.Isbn13);
-                command.Parameters.AddWithValue("@UPDATEDAT", DateTime.Now);
+                command.Parameters.AddWithValue("@UPDATEDAT", book.UpdatedAt);
 
-                command.ExecuteNonQuery();
-
-                return null!;
-            }
-            catch (Exception ex)
-            {
-                Console.WriteLine(ex);
-                return null!;
-            }
-        }
-
-        public Books ActivateBookByTitle(Books book)
-        {
-            const string removeBook = "UPDATE BOOK " +
-                "SET BOOK_STATUS = 1 " +
-                "WHERE TITLE = @TITLE";
-
-            using var command = new SqlCommand(removeBook, _connection);
-            try
-            {
-                command.Parameters.AddWithValue("@TITLE", book.Title);
-                command.ExecuteNonQuery();
-
-                return null!;
-            }
-            catch (Exception ex)
-            {
-                Console.WriteLine(ex);
-                return null!;
-            }
-        }
-
-        public Books InactivateBookByTitle(Books book)
-        {
-            const string removeBook = "UPDATE BOOK " +
-                "SET BOOK_STATUS = 0 " +
-                "WHERE TITLE = @TITLE";
-
-            using var command = new SqlCommand(removeBook, _connection);
-            try
-            {
-                command.Parameters.AddWithValue("@TITLE", book.Title);
                 command.ExecuteNonQuery();
 
                 return null!;
@@ -286,15 +280,22 @@ namespace Library_Console.Repository
 
         public Books AlterBookStatus(Books book)
         {
-            const string updateBookStatus = "UPDATE BOOK " +
-                "SET BOOK_STATUS = 1 " +
-                "WHERE TITLE = @TITLE";
+            const string removeBook = "UPDATE BOOK " +
+                "SET BOOK_STATUS = @BOOK_STATUS, " +
+                "UPDATEDAT = @UPDATEDAT " +
+                "WHERE TITLE = @TITLE " +
+                "AND AUTHOR = @AUTHOR";
 
-            using var command = new SqlCommand(updateBookStatus, _connection);
+            using var command = new SqlCommand(removeBook, _connection);
             try
             {
+                command.Parameters.AddWithValue("@BOOK_STATUS", book.Status);
+                command.Parameters.AddWithValue("@UPDATEDAT", book.UpdatedAt);
                 command.Parameters.AddWithValue("@TITLE", book.Title);
+                command.Parameters.AddWithValue("@AUTHOR", book.Author);
+
                 command.ExecuteNonQuery();
+
                 return null!;
             }
             catch (Exception ex)
@@ -307,14 +308,18 @@ namespace Library_Console.Repository
         public Books AlterBookCondition(Books book)
         {
             const string updateBookCondition = "UPDATE BOOK " +
-                "SET BOOK_CONDITION = @CONDITION " +
-                "WHERE TITLE = @TITLE";
+                "SET BOOK_CONDITION = @CONDITION, " +
+                "UPDATEDAT = @UPDATEDAT " +
+                "WHERE TITLE = @TITLE " +
+                "AND AUTHOR = @AUTHOR";
 
             using var command = new SqlCommand(updateBookCondition, _connection);
             try
             {
                 command.Parameters.AddWithValue("@CONDITION", book.Condition);
+                command.Parameters.AddWithValue("@UPDATEDAT", book.UpdatedAt);
                 command.Parameters.AddWithValue("@TITLE", book.Title);
+                command.Parameters.AddWithValue("@AUTHOR", book.Author);
 
                 command.ExecuteNonQuery();
 

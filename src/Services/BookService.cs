@@ -22,24 +22,41 @@ namespace Library_Console.Services
         {
             var book = new Books();
 
-            Console.WriteLine("Título: ");
-            book.Title = Console.ReadLine()!;
+            Console.WriteLine("Buscar livro pelo título e autor: ");
+            do
+            {
+                Console.WriteLine("Informe o título do livro: ");
+                book.Title = Console.ReadLine()!.ToUpper();
+            } while (!_bookRepository.GetExistingBookTitle(book.Title));
 
-            _bookRepository.GetBookByTitle(book);
+            do
+            {
+                Console.WriteLine("Informe o autor do livro: ");
+                book.Author = Console.ReadLine()!.ToUpper();
+            } while (!_bookRepository.GetExistingBookAuthor(book.Author));
 
-            return null!;
+            _bookRepository.GetBookByTitleAndAuthor(book);
+
+            Console.WriteLine("Livro consultado com sucesso...");
+            Console.WriteLine("Pressione ENTER para continuar...");
+            Console.ReadLine();
+
+            return book!;
         }
 
         public Books GetBookByAuthor()
         {
             var book = new Books();
 
-            Console.WriteLine("Autor: ");
-            book.Author = Console.ReadLine()!;
+            do
+            {
+                Console.WriteLine("Informe o nome do autor: ");
+                book.Author = Console.ReadLine()!.ToUpper();
+            } while (!_bookRepository.GetExistingBookAuthor(book.Author));
 
             _bookRepository.GetBookByAuthor(book);
 
-            return null!;
+            return book!;
         }
 
         public Books SaveBook()
@@ -48,30 +65,51 @@ namespace Library_Console.Services
 
             do
             {
-                Console.WriteLine("Titulo: ");
-                book.Title = Console.ReadLine()!;
-            } while (book.Title.Length < 3);
+                Console.WriteLine("Informe o titulo do livro: ");
+                book.Title = Console.ReadLine()!.ToUpper();
+            } while ((book.Title.Length < 3 || book.Title.Length > 100));
 
-            Console.WriteLine("Autor: ");
-            book.Author = Console.ReadLine()!;
+            do
+            {
+                Console.WriteLine("Informe o autor do livro: ");
+                book.Author = Console.ReadLine()!.ToUpper();
+            } while (book.Author.Length < 3 || book.Author.Length > 50);
 
-            Console.WriteLine("Páginas: ");
-            book.Pages = Console.ReadLine()!;
+            do
+            {
+                Console.WriteLine("Informe a quantidade de páginas do livro: ");
+                book.Pages = Convert.ToInt32(Console.ReadLine()!);
+            } while (book.Pages <= 0);
 
-            Console.WriteLine("Editora: ");
-            book.Publisher = Console.ReadLine()!;
+            do
+            {
+                Console.WriteLine("Informe a editora do livro: ");
+                book.Publisher = Console.ReadLine()!.ToUpper();
+            } while (book.Publisher.Length < 3 || book.Publisher.Length > 100);
 
-            Console.WriteLine("Idioma: ");
-            book.Language = Console.ReadLine()!;
+            do
+            {
+                Console.WriteLine("Informe o idioma do livro: ");
+                book.Language = Console.ReadLine()!.ToUpper();
+            } while (book.Language.Length < 3 || book.Language.Length > 500);
 
-            Console.WriteLine("Condição: ");
-            book.Condition = Console.ReadLine()!;
+            do
+            {
+                Console.WriteLine("Informe a condição do livro: ");
+                book.Condition = Console.ReadLine()!.ToUpper();
+            } while (book.Condition.Length < 3 || book.Condition.Length > 100);
 
-            Console.WriteLine("ISBN 10: ");
-            book.Isbn10 = Console.ReadLine()!;
+            do
+            {
+                Console.WriteLine("Informe o ISBN 10 do livro: ");
+                book.Isbn10 = Console.ReadLine()!.ToUpper();
+            } while (book.Isbn10.Length != 10 && string.IsNullOrWhiteSpace(book.Isbn10));
 
-            Console.WriteLine("ISBN 13: ");
-            book.Isbn13 = Console.ReadLine()!;
+            do
+            {
+                Console.WriteLine("Informe o ISBN 13 do livro: ");
+                book.Isbn13 = Console.ReadLine()!.ToUpper();
+            } while (book.Isbn13.Length != 13 && string.IsNullOrWhiteSpace(book.Isbn10));
 
             book.CreatedAt = DateTime.Now;
 
@@ -79,94 +117,114 @@ namespace Library_Console.Services
 
             _bookRepository.SaveBook(book);
 
-            return null!;
+            return book!;
         }
 
         public Books UpdatedBook()
         {
             var book = new Books();
 
-            Console.WriteLine("Título atuaL: ");
-            var title = Console.ReadLine()!;
+            do
+            {
+                Console.WriteLine("Informe o titulo do livro: ");
+                book.Title = Console.ReadLine()!.ToUpper();
+            } while ((book.Title.Length < 3 || book.Title.Length > 100) && _bookRepository.GetExistingBookTitle(book.Title));
 
-            Console.WriteLine("Novo Título: ");
-            book.Title = Console.ReadLine()!;
+            do
+            {
+                Console.WriteLine("Informe o autor do livro: ");
+                book.Author = Console.ReadLine()!.ToUpper();
+            } while ((book.Author.Length < 3 || book.Author.Length > 50) && _bookRepository.GetExistingBookAuthor(book.Author));
 
-            Console.WriteLine("Autor: ");
-            book.Author = Console.ReadLine()!;
+            do
+            {
+                Console.WriteLine("Informe a quantidade de páginas do livro: ");
+                book.Pages = Convert.ToInt32(Console.ReadLine()!);
+            } while (book.Pages <= 0);
 
-            Console.WriteLine("Páginas: ");
-            book.Pages = Console.ReadLine()!;
+            do
+            {
+                Console.WriteLine("Informe a editora do livro: ");
+                book.Publisher = Console.ReadLine()!.ToUpper();
+            } while (book.Publisher.Length < 3 || book.Publisher.Length > 100);
 
-            Console.WriteLine("Editora: ");
-            book.Publisher = Console.ReadLine()!;
+            do
+            {
+                Console.WriteLine("Informe a condição do livro: ");
+                book.Condition = Console.ReadLine()!.ToUpper();
+            } while (book.Condition.Length < 3 || book.Condition.Length > 100);
 
-            Console.WriteLine("Condição: ");
-            book.Condition = Console.ReadLine()!;
+            book.UpdatedAt = DateTime.Now;
 
-            Console.WriteLine("Idioma");
-            book.Language = Console.ReadLine()!;
+            _bookRepository.UpdateBookByTitle(book);
 
-            Console.WriteLine("ISBN 10: ");
-            book.Isbn10 = Console.ReadLine()!;
-
-            Console.WriteLine("ISBN 13: ");
-            book.Isbn13 = Console.ReadLine()!;
-
-            _bookRepository.UpdateBookByTitle(book, title);
-
-            return null!;
+            return book!;
         }
 
         public Books ActiveBook()
         {
             var book = new Books();
+            char status;
 
-            Console.WriteLine("Título: ");
-            book.Title = Console.ReadLine()!;
+            do
+            {
+                Console.WriteLine("Informe o titulo do livro: ");
+                book.Title = Console.ReadLine()!.ToUpper();
+            } while ((book.Title.Length < 3 || book.Title.Length > 100) && _bookRepository.GetExistingBookTitle(book.Title));
 
-            _bookRepository.ActivateBookByTitle(book);
+            do
+            {
+                Console.WriteLine("Informe o autor do livro: ");
+                book.Author = Console.ReadLine()!.ToUpper();
+            } while ((book.Author.Length < 3 || book.Author.Length > 50) && _bookRepository.GetExistingBookAuthor(book.Author));
 
-            return null!;
-        }
+            do
+            {
+                Console.WriteLine("Informe o status do livro:\n" +
+                    "A - Ativo\n" +
+                    "I - Inativo");
+                status = Convert.ToChar(Console.ReadLine()!.ToUpper());
+            } while (!status.Equals('A') && !status.Equals('I'));
 
-        public Books InactivateBook()
-        {
-            var book = new Books();
+            if (status == 'A')
+                book.Status = true;
+            else if (status == 'I')
+                book.Status = false;
 
-            Console.WriteLine("Título: ");
-            book.Title = Console.ReadLine()!;
-
-            _bookRepository.InactivateBookByTitle(book);
-
-            return null!;
-        }
-
-        public Books AlterBookStatus()
-        {
-            var book = new Books();
-
-            Console.WriteLine("Título: ");
-            book.Title = Console.ReadLine()!;
+            book.UpdatedAt = DateTime.Now;
 
             _bookRepository.AlterBookStatus(book);
 
-            return null!;
+            return book!;
         }
 
         public Books AlterBookCondition()
         {
             var book = new Books();
 
-            Console.WriteLine("Título: ");
-            book.Title = Console.ReadLine()!;
+            do
+            {
+                Console.WriteLine("Informe o titulo do livro: ");
+                book.Title = Console.ReadLine()!.ToUpper();
+            } while ((book.Title.Length < 3 || book.Title.Length > 100) && _bookRepository.GetExistingBookTitle(book.Title));
 
-            Console.WriteLine("Condição: ");
-            book.Condition = Console.ReadLine()!;
+            do
+            {
+                Console.WriteLine("Informe o autor do livro: ");
+                book.Author = Console.ReadLine()!.ToUpper();
+            } while ((book.Author.Length < 3 || book.Author.Length > 50) && _bookRepository.GetExistingBookAuthor(book.Author));
+
+            do
+            {
+                Console.WriteLine("Informe a condição do livro: ");
+                book.Condition = Console.ReadLine()!.ToUpper();
+            } while (book.Condition.Length < 3 || book.Condition.Length > 100);
+
+            book.UpdatedAt = DateTime.Now;
 
             _bookRepository.AlterBookCondition(book);
 
-            return null!;
+            return book!;
         }
     }
 }

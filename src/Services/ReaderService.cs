@@ -110,47 +110,42 @@ namespace Library_Console.Services
             return null!;
         }
 
-        public Readers InactiveReader()
+        public Readers AlterReaderStatus()
         {
             var reader = new Readers();
             bool documentExist;
+            char status;
 
-            Console.WriteLine("Inativar leitor");
+            Console.WriteLine("Alterar Status do leitor");
             do
             {
-                Console.WriteLine("Informe o CPF para inativar cadastro: ");
+                Console.WriteLine("Informe o CPF do leitor: ");
                 reader.Document = Console.ReadLine()!;
                 documentExist = _readerRepository.GetReaderDocument(reader.Document);
             } while ((!Cpf.Validar(reader.Document)) && (string.IsNullOrWhiteSpace(reader.Document)) && (documentExist));
 
-            _readerRepository.InactivateReaderByDocument(reader);
+            do
+            {
+                Console.WriteLine("Informe o status do leitor: \n" +
+                    "A - Ativo\n" +
+                    "I - Inativo");
+                status = Convert.ToChar(Console.ReadLine()!.ToUpper());
+            } while (!status.Equals('A') && !status.Equals('I'));
 
-            Console.WriteLine("Inativação do leitor realizada com sucesso...");
+            if(status == 'A')
+                reader.Status = true;
+            else if (status == 'I')
+                reader.Status = false;
+
+            _readerRepository.AlterReaderStatusByDocument(reader);
+
+            Console.WriteLine("Alteração do status do leitor realizado com sucesso...");
             Console.WriteLine("Pressione ENTER para continuar...");
             Console.ReadLine();
 
             return null!;
         }
 
-        public Readers ActiveReader()
-        {
-            var reader = new Readers();
-            bool documentExist;
 
-            Console.WriteLine("Ativar leitor");
-            do
-            {
-                Console.WriteLine("Informe o CPF para ativar cadastro: ");
-                reader.Document = Console.ReadLine()!;
-                documentExist = _readerRepository.GetReaderDocument(reader.Document);
-            } while ((!Cpf.Validar(reader.Document)) && (string.IsNullOrWhiteSpace(reader.Document)) && (documentExist));
-
-            _readerRepository.ActivateReaderByDocument(reader);
-            Console.WriteLine("Ativação do leitor realizada com sucesso...");
-            Console.WriteLine("Pressione ENTER para continuar...");
-            Console.ReadLine();
-
-            return null!;
-        }
     }
 }

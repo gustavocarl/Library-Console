@@ -106,6 +106,7 @@ namespace Library_Console.Repository
         public bool GetReaderDocument(string document)
         {
             bool documentExist = false;
+
             const string queryReaderDocument = "SELECT DOCUMENT " +
               "FROM READER " +
               "WHERE DOCUMENT = @DOCUMENT";
@@ -116,9 +117,7 @@ namespace Library_Console.Repository
             SqlDataReader reader = command.ExecuteReader();
 
             if (reader.HasRows)
-            {
                 documentExist = true;
-            }
 
             reader.Close();
             return documentExist;
@@ -178,39 +177,17 @@ namespace Library_Console.Repository
             }
         }
 
-        public Readers ActivateReaderByDocument(Readers reader)
+        public Readers AlterReaderStatusByDocument(Readers reader)
         {
             const string activateReaderByDocument = "UPDATE READER " +
-                "SET STATUS = 1," +
+                "SET STATUS = @STATUS," +
                 "UPDATEDAT = @UPDATEDAT " +
                 "WHERE DOCUMENT = @DOCUMENT";
 
             using var command = new SqlCommand(activateReaderByDocument, _connection);
             try
             {
-                command.Parameters.AddWithValue("@DOCUMENT", reader.Document);
-                command.Parameters.AddWithValue("@UPDATEDAT", DateTime.Now);
-
-                command.ExecuteNonQuery();
-                return null!;
-            }
-            catch (Exception ex)
-            {
-                Console.WriteLine(ex);
-                return null!;
-            }
-        }
-
-        public Readers InactivateReaderByDocument(Readers reader)
-        {
-            const string inactivateReaderByDocument = "UPDATE READER " +
-                "SET STATUS = 0," +
-                "UPDATEDAT = @UPDATEDAT " +
-                "WHERE DOCUMENT = @DOCUMENT";
-
-            using var command = new SqlCommand(inactivateReaderByDocument, _connection);
-            try
-            {
+                command.Parameters.AddWithValue("@STATUS", reader.Status);
                 command.Parameters.AddWithValue("@DOCUMENT", reader.Document);
                 command.Parameters.AddWithValue("@UPDATEDAT", DateTime.Now);
 
