@@ -79,7 +79,7 @@ namespace Library_Console.Repository
             }
         }
 
-        public int GetReaderId(string document)
+        public int GetReaderId(Readers rd)
         {
             int id = 0;
             const string queryReaderId = "SELECT ID, DOCUMENT " +
@@ -87,7 +87,7 @@ namespace Library_Console.Repository
                 "WHERE DOCUMENT = @DOCUMENT";
 
             using var command = new SqlCommand(queryReaderId, _connection);
-            command.Parameters.AddWithValue("@DOCUMENT", document);
+            command.Parameters.AddWithValue("@DOCUMENT", rd.Document);
 
             SqlDataReader reader = command.ExecuteReader();
 

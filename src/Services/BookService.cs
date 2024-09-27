@@ -14,7 +14,14 @@ namespace Library_Console.Services
 
         public Books GetAllBooks()
         {
+            Console.WriteLine("Lista de Livros:");
+
             _bookRepository.GetAllBooks();
+
+            Console.WriteLine("Lista de livros consultada com sucesso...");
+            Console.WriteLine("Pressione ENTER para continuar...");
+            Console.ReadLine();
+
             return null!;
         }
 

@@ -182,16 +182,18 @@ namespace Library_Console.Repository
             return bookAuthorExist;
         }
 
-        public int GetBookId(string title)
+        public int GetBookId(Books book)
         {
             int id = 0;
 
             const string queryBookId = "SELECT ID, TITLE " +
                 "FROM BOOK " +
-                "WHERE TITLE = @TITLE";
+                "WHERE TITLE = @TITLE " +
+                "AND AUTHOR = @AUTHOR ";
 
             using var command = new SqlCommand(queryBookId, _connection);
-            command.Parameters.AddWithValue("@TITLE", title);
+            command.Parameters.AddWithValue("@TITLE", book.Title);
+            command.Parameters.AddWithValue("@AUTHOR", book.Author);
 
             SqlDataReader reader = command.ExecuteReader();
 

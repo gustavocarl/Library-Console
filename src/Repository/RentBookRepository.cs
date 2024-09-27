@@ -3,16 +3,16 @@ using System.Data.SqlClient;
 
 namespace Library_Console.Repository
 {
-    public class Rent_BookRepository
+    public class RentBookRepository
     {
         private readonly SqlConnection _connection;
 
-        public Rent_BookRepository(SqlConnection connection)
+        public RentBookRepository(SqlConnection connection)
         {
             _connection = connection;
         }
 
-        public Rent_Books GetAllRentedBooks()
+        public RentBooks GetAllRentedBooks()
         {
             const string queryAllRentedBooks = "SELECT RB.ID, " +
                 "R.DOCUMENT, R.FIRST_NAME, R.LAST_NAME, " +
@@ -29,7 +29,6 @@ namespace Library_Console.Repository
             {
                 SqlDataReader reader = command.ExecuteReader();
 
-                Console.WriteLine("Lista de livros alugados");
                 while (reader.Read())
                 {
                     Console.WriteLine($"Id: {reader.GetInt32(0)}");
@@ -50,8 +49,6 @@ namespace Library_Console.Repository
                     Console.WriteLine();
                 }
 
-                Console.WriteLine("Pressione ENTER para continuar...");
-
                 reader.Close();
 
                 return null!;
@@ -63,7 +60,7 @@ namespace Library_Console.Repository
             }
         }
 
-        public Rent_Books GetAllOverdueBooks(DateTime date)
+        public RentBooks GetAllOverdueBooks(RentBooks rentBooks)
         {
             const string queryOverdueBooks = "SELECT RB.ID, " +
                 "R.DOCUMENT, R.FIRST_NAME, R.LAST_NAME, " +
@@ -78,11 +75,10 @@ namespace Library_Console.Repository
             using var command = new SqlCommand(queryOverdueBooks, _connection);
             try
             {
-                command.Parameters.AddWithValue("@DATE", date);
+                command.Parameters.AddWithValue("@DATE", rentBooks.ReturnDate);
 
                 SqlDataReader reader = command.ExecuteReader();
 
-                Console.WriteLine("Lista de livros alugados");
                 while (reader.Read())
                 {
                     Console.WriteLine($"Id: {reader.GetInt32(0)}");
@@ -103,8 +99,6 @@ namespace Library_Console.Repository
                     Console.WriteLine();
                 }
 
-                Console.WriteLine("Pressione ENTER para continuar...");
-
                 reader.Close();
 
                 return null!;
@@ -116,7 +110,7 @@ namespace Library_Console.Repository
             }
         }
 
-        public Rent_Books GetABookRentedByTitle(string title)
+        public RentBooks GetABookRentedByTitle(Books book)
         {
             const string queryRentedBookByTitle = "SELECT RB.ID, " +
                 "R.DOCUMENT, R.FIRST_NAME, R.LAST_NAME, " +
@@ -125,16 +119,16 @@ namespace Library_Console.Repository
                 "FROM RENT_BOOK AS RB " +
                 "INNER JOIN READER AS R ON (RB.READER_ID = R.ID) " +
                 "INNER JOIN BOOK AS B ON  (RB.BOOK_ID = B.ID) " +
-                "WHERE B.TITLE = @TITLE";
+                "WHERE B.TITLE = @TITLE AND " +
+                "B.AUTHOR = @AUTHOR";
 
             using var command = new SqlCommand(queryRentedBookByTitle, _connection);
             try
             {
-                command.Parameters.AddWithValue("@TITLE", title);
+                command.Parameters.AddWithValue("@TITLE", book.Title);
+                command.Parameters.AddWithValue("@AUTHOR", book.Author);
 
                 SqlDataReader reader = command.ExecuteReader();
-
-                Console.WriteLine($"Lista de alugueis de {title}");
 
                 while (reader.Read())
                 {
@@ -156,8 +150,6 @@ namespace Library_Console.Repository
                     Console.WriteLine();
                 }
 
-                Console.WriteLine("Pressione ENTER para continuar...");
-
                 reader.Close();
 
                 return null!;
@@ -169,7 +161,96 @@ namespace Library_Console.Repository
             }
         }
 
-        public Rent_Books SaveRentBook(string document, string title)
+        public bool GetRentedBook(Books book)
+        {
+            var bookIsRented = false;
+            const string queryRentedBook = "SELECT RB.ID, " +
+                "RB.BOOK_ID, RB.RENTED, B.ID, B.TITLE, " +
+                "B.AUTHOR FROM RENT_BOOK AS RB " +
+                "INNER JOIN BOOK AS B " +
+                "ON (RB.BOOK_ID = B.ID) " +
+                "WHERE B.TITLE = @TITLE AND B.AUTHOR = @AUTHOR AND RENTED = 1";
+
+            using var command = new SqlCommand(queryRentedBook, _connection);
+            command.Parameters.AddWithValue("@TITLE", book.Title);
+            command.Parameters.AddWithValue("@AUTHOR", book.Author);
+            
+            SqlDataReader reader = command.ExecuteReader();
+
+            if (reader.HasRows)
+            {
+                bookIsRented = true;
+            }
+
+            reader.Close();
+
+            return bookIsRented;
+        }
+
+        public bool GetReaderDocument(string document)
+        {
+            bool documentExist = false;
+
+            const string queryReaderDocument = "SELECT DOCUMENT " +
+              "FROM READER " +
+              "WHERE DOCUMENT = @DOCUMENT";
+
+            using var command = new SqlCommand(queryReaderDocument, _connection);
+            command.Parameters.AddWithValue("@DOCUMENT", document);
+
+            SqlDataReader reader = command.ExecuteReader();
+
+            if (reader.HasRows)
+                documentExist = true;
+
+            reader.Close();
+            return documentExist;
+        }
+
+
+        public bool GetExistingBookTitle(string title)
+        {
+            bool bookTitleExist = false;
+
+            const string queryBookTitle = "SELECT TITLE FROM BOOK " +
+                "WHERE TITLE = @TITLE";
+
+            var command = new SqlCommand(queryBookTitle, _connection);
+            command.Parameters.AddWithValue("@TITLE", title);
+
+            SqlDataReader reader = command.ExecuteReader();
+            if (reader.HasRows)
+            {
+                bookTitleExist = true;
+            }
+
+            reader.Close();
+
+            return bookTitleExist;
+        }
+
+        public bool GetExistingBookAuthor(string author)
+        {
+            bool bookAuthorExist = false;
+
+            const string queryBookTitle = "SELECT AUTHOR FROM BOOK " +
+                "WHERE AUTHOR = @AUTHOR";
+
+            var command = new SqlCommand(queryBookTitle, _connection);
+            command.Parameters.AddWithValue("@AUTHOR", author);
+
+            SqlDataReader reader = command.ExecuteReader();
+            if (reader.HasRows)
+            {
+                bookAuthorExist = true;
+            }
+
+            reader.Close();
+
+            return bookAuthorExist;
+        }
+
+        public RentBooks SaveRentBook(Readers reader, Books book, RentBooks rentBook)
         {
             const string createRentBook = "INSERT INTO RENT_BOOK ( " +
                 "READER_ID, BOOK_ID, RENTED, RENTAL_DATE, " +
@@ -179,22 +260,22 @@ namespace Library_Console.Repository
                 "@RETURN_DATE, @RETURN_STATUS, @CREATEDAT, @UPDATEDAT ) ";
 
             var readerRepository = new ReaderRepository(_connection);
-            int readerId = readerRepository.GetReaderId(document);
+            int readerId = readerRepository.GetReaderId(reader);
 
             var bookRepository = new BookRepository(_connection);
-            int bookId = bookRepository.GetBookId(title);
+            int bookId = bookRepository.GetBookId(book);
 
             using var command = new SqlCommand(createRentBook, _connection);
             try
             {
                 command.Parameters.AddWithValue("@READER_ID", readerId);
                 command.Parameters.AddWithValue("@BOOK_ID", bookId);
-                command.Parameters.AddWithValue("@RENTED", true);
-                command.Parameters.AddWithValue("@RENTAL_DATE", DateTime.Now.Date);
-                command.Parameters.AddWithValue("@RETURN_DATE", DateTime.Now.AddMonths(1));
-                command.Parameters.AddWithValue("@RETURN_STATUS", "Alugado");
-                command.Parameters.AddWithValue("@CREATEDAT", DateTime.Now);
-                command.Parameters.AddWithValue("@UPDATEDAT", DateTime.Now);
+                command.Parameters.AddWithValue("@RENTED", rentBook.Rented);
+                command.Parameters.AddWithValue("@RENTAL_DATE", rentBook.RentalDate);
+                command.Parameters.AddWithValue("@RETURN_DATE", rentBook.ReturnDate);
+                command.Parameters.AddWithValue("@RETURN_STATUS", rentBook.ReturnStatus);
+                command.Parameters.AddWithValue("@CREATEDAT", rentBook.CreatedAt);
+                command.Parameters.AddWithValue("@UPDATEDAT", rentBook.UpdatedAt);
 
                 command.ExecuteNonQuery();
                 return null!;
@@ -206,23 +287,27 @@ namespace Library_Console.Repository
             }
         }
 
-        public Rent_Books ReturnRentedBook(string document, string title)
+        public RentBooks ReturnRentedBook(Readers reader, Books book, RentBooks rentBook)
         {
-            var readerRepository = new ReaderRepository(_connection);
-            int readerId = readerRepository.GetReaderId(document);
+            var readerRepository = new ReaderRepository(_connection); ;
+            int readerId = readerRepository.GetReaderId(reader);
 
             var bookRepository = new BookRepository(_connection);
-            int bookId = bookRepository.GetBookId(title);
+            int bookId = bookRepository.GetBookId(book);
 
             const string updateRentedBook = "UPDATE RENT_BOOK " +
-                "SET RENTED = 0, " +
-                "RETURN_STATUS = 'Devolvido' " +
+                "SET RENTED = @RENTED, " +
+                "RETURN_STATUS = @RETURN_STATUS," +
+                "UPDATEDAT = @UPDATEDAT " +
                 "WHERE READER_ID = @READER_ID " +
                 "AND BOOK_ID = @BOOK_ID ";
 
             using var command = new SqlCommand(updateRentedBook, _connection);
             try
             {
+                command.Parameters.AddWithValue("@RENTED", rentBook.Rented);
+                command.Parameters.AddWithValue("@RETURN_STATUS", rentBook.ReturnStatus);
+                command.Parameters.AddWithValue("@UPDATEDAT", rentBook.UpdatedAt);
                 command.Parameters.AddWithValue("@READER_ID", readerId);
                 command.Parameters.AddWithValue("@BOOK_ID", bookId);
 

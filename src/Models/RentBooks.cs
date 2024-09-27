@@ -1,6 +1,6 @@
 ﻿namespace Library_Console.Models
 {
-    public class Rent_Books
+    public class RentBooks
     {
         public int Id { get; set; }
 
@@ -9,6 +9,8 @@
         public int BookId { get; set; }
 
         public bool Rented { get; set; }
+
+        public string ReturnStatus { get; set; } = string.Empty;
 
         public DateTime RentalDate { get; set; }
 

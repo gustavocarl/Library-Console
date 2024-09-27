@@ -59,12 +59,12 @@ namespace Library_Console.Menu
             Console.WriteLine("4  - Listar todos livros");
             Console.WriteLine("5  - Listar leitor pelo CPF");
             Console.WriteLine("6  - Listar livro pelo título");
-            Console.WriteLine("7  - Listar livros pelo autor");
-            Console.WriteLine("7  - Listar livros pelo autor");
+            Console.WriteLine("7  - Listar livros do mesmo autor");
             Console.WriteLine("8  - Alterar dados do leitor pelo CPF");
             Console.WriteLine("9  - Alterar dados do livro");
             Console.WriteLine("10 - Alterar status do leitor");
             Console.WriteLine("11 - Altera status do livro");
+            Console.WriteLine("12 - Alterar condição do livro");
             Console.WriteLine("=====================================");
             Console.WriteLine("0 - Retornar ao menu anterior");
             Console.WriteLine("=====================================");
@@ -134,6 +134,11 @@ namespace Library_Console.Menu
                     AdministrativeMenu(connection);
                     break;
 
+                case "12":
+                    bookService.AlterBookCondition();
+                    AdministrativeMenu(connection);
+                    break;
+
                 default:
                     Console.WriteLine("Opção inválida");
                     Console.WriteLine("Pressione ENTER para continuar...");
@@ -145,12 +150,10 @@ namespace Library_Console.Menu
 
         public static void RentMenu(SqlConnection connection)
         {
-            string cpf, title;
-            DateTime date;
-
-            var rentBookRepository = new Rent_BookRepository(connection);
+            var readerRepository = new ReaderRepository(connection);
             var bookRepository = new BookRepository(connection);
-            var bookService = new BookService(bookRepository);
+            var rentBookRepository = new RentBookRepository(connection);
+            var rentBookService = new RentBookService(rentBookRepository);
 
             Console.Clear();
             Console.WriteLine("==========================================================");
@@ -162,7 +165,6 @@ namespace Library_Console.Menu
             Console.WriteLine("3 - Listar todos os livros alugados");
             Console.WriteLine("4 - Listar todos os livros alugados com situação em atraso");
             Console.WriteLine("5 - Listar livro alugado pelo título");
-            Console.WriteLine("6 - Alterar condição do livro");
             Console.WriteLine("==========================================================");
             Console.WriteLine("0 - Retornar ao menu anterior");
             Console.WriteLine("==========================================================");
@@ -175,47 +177,27 @@ namespace Library_Console.Menu
                     break;
 
                 case "1":
-                    Console.WriteLine("CPF: ");
-                    cpf = Console.ReadLine()!;
-                    Console.WriteLine("Título: ");
-                    title = Console.ReadLine()!;
-                    rentBookRepository.SaveRentBook(cpf, title);
+                    rentBookService.SaveRentBook();
                     RentMenu(connection);
                     break;
 
                 case "2":
-                    Console.WriteLine("CPF: ");
-                    cpf = Console.ReadLine()!;
-                    Console.WriteLine("Título: ");
-                    title = Console.ReadLine()!;
-                    rentBookRepository.ReturnRentedBook(cpf, title);
+                    rentBookService.ReturnRentedBook();
                     RentMenu(connection);
                     break;
 
                 case "3":
-                    rentBookRepository.GetAllRentedBooks();
-                    Console.ReadLine();
+                    rentBookService.GetAllRentedBooks();
                     RentMenu(connection);
                     break;
 
                 case "4":
-                    Console.WriteLine("Data: ");
-                    date = Convert.ToDateTime(Console.ReadLine()!).Date;
-                    rentBookRepository.GetAllOverdueBooks(date);
-                    Console.ReadLine();
+                    rentBookService.GetAllOverdueBooks();
                     RentMenu(connection);
                     break;
 
                 case "5":
-                    Console.WriteLine("Título: ");
-                    title = Console.ReadLine()!;
-                    rentBookRepository.GetABookRentedByTitle(title);
-                    Console.ReadLine();
-                    RentMenu(connection);
-                    break;
-
-                case "6":
-                    bookService.AlterBookCondition();
+                    rentBookService.GetABookRentedByTitle();
                     RentMenu(connection);
                     break;
 
