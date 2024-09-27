@@ -132,7 +132,7 @@ namespace Library_Console.Services
                 status = Convert.ToChar(Console.ReadLine()!.ToUpper());
             } while (!status.Equals('A') && !status.Equals('I'));
 
-            if(status == 'A')
+            if (status == 'A')
                 reader.Status = true;
             else if (status == 'I')
                 reader.Status = false;
@@ -145,7 +145,5 @@ namespace Library_Console.Services
 
             return null!;
         }
-
-
     }
 }

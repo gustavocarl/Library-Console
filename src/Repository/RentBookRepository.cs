@@ -174,7 +174,7 @@ namespace Library_Console.Repository
             using var command = new SqlCommand(queryRentedBook, _connection);
             command.Parameters.AddWithValue("@TITLE", book.Title);
             command.Parameters.AddWithValue("@AUTHOR", book.Author);
-            
+
             SqlDataReader reader = command.ExecuteReader();
 
             if (reader.HasRows)
@@ -206,7 +206,6 @@ namespace Library_Console.Repository
             reader.Close();
             return documentExist;
         }
-
 
         public bool GetExistingBookTitle(string title)
         {

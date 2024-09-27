@@ -150,8 +150,6 @@ namespace Library_Console.Menu
 
         public static void RentMenu(SqlConnection connection)
         {
-            var readerRepository = new ReaderRepository(connection);
-            var bookRepository = new BookRepository(connection);
             var rentBookRepository = new RentBookRepository(connection);
             var rentBookService = new RentBookService(rentBookRepository);
 

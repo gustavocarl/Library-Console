@@ -151,7 +151,7 @@ namespace Library_Console.Repository
             command.Parameters.AddWithValue("@TITLE", title);
 
             SqlDataReader reader = command.ExecuteReader();
-            if(reader.HasRows)
+            if (reader.HasRows)
             {
                 bookTitleExist = true;
             }
