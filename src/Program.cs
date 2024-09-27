@@ -7,7 +7,7 @@ internal class Program
     private static void Main(string[] args)
     {
         var dbSettings = new DbSettings("Server=localhost; Database=LIBRARY_CONSOLE; " +
-        "USER ID=sa; PASSWORD=123456; ENCRYPT=TRUE; TRUSTSERVERCERTIFICATE=TRUE; CONNECTION TIMEOUT=30;");
+        "USER ID=YourUserID; PASSWORD=YourPassword; ENCRYPT=TRUE; TRUSTSERVERCERTIFICATE=TRUE; CONNECTION TIMEOUT=30;");
 
         using var connection = new SqlConnection(dbSettings.ConnectionString);
 
