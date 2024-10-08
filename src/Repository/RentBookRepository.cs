@@ -60,6 +60,45 @@ namespace Library_Console.Repository
             }
         }
 
+        public List<RentedBooksByReader> GetAllRentedBooksByReader(Readers reader)
+        {
+            var booksList = new List<RentedBooksByReader>();
+
+            const string queryAllRentedBookByReader = "SELECT RB.ID, B.TITLE, B.AUTHOR " +
+                "FROM RENT_BOOK AS RB " +
+                "INNER JOIN READER AS R ON(RB.READER_ID = R.ID) " +
+                "INNER JOIN BOOK AS B ON(RB.BOOK_ID = B.ID)" +
+                "WHERE R.DOCUMENT = @DOCUMENT AND RENTED = 1 ";
+
+            using var command = new SqlCommand(queryAllRentedBookByReader, _connection);
+            try
+            {
+                command.Parameters.AddWithValue("@DOCUMENT", reader.Document);
+
+                SqlDataReader rd = command.ExecuteReader();
+
+                while (rd.Read())
+                {
+                    var bookRented = new RentedBooksByReader
+                    {
+                        Id = rd.GetInt32(0),
+                        Author = rd.GetString(1),
+                        Title = rd.GetString(2)
+                    };
+                    booksList.Add(bookRented);
+                }
+
+                rd.Close();
+
+                return booksList;
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine(ex);
+                return null!;
+            }
+        }
+
         public RentBooks GetAllOverdueBooks(RentBooks rentBooks)
         {
             const string queryOverdueBooks = "SELECT RB.ID, " +
@@ -169,7 +208,8 @@ namespace Library_Console.Repository
                 "B.AUTHOR FROM RENT_BOOK AS RB " +
                 "INNER JOIN BOOK AS B " +
                 "ON (RB.BOOK_ID = B.ID) " +
-                "WHERE B.TITLE = @TITLE AND B.AUTHOR = @AUTHOR AND RENTED = 1";
+                "WHERE B.TITLE = @TITLE AND B.AUTHOR = @AUTHOR " +
+                "AND RENTED = 1";
 
             using var command = new SqlCommand(queryRentedBook, _connection);
             command.Parameters.AddWithValue("@TITLE", book.Title);
@@ -286,20 +326,20 @@ namespace Library_Console.Repository
             }
         }
 
-        public RentBooks ReturnRentedBook(Readers reader, Books book, RentBooks rentBook)
+        public RentBooks ReturnRentedBook(Readers reader, int rentId, RentBooks rentBook)
         {
             var readerRepository = new ReaderRepository(_connection); ;
             int readerId = readerRepository.GetReaderId(reader);
 
-            var bookRepository = new BookRepository(_connection);
-            int bookId = bookRepository.GetBookId(book);
+            //var bookRepository = new BookRepository(_connection);
+            //int bookId = bookRepository.GetBookId(bookId);
 
             const string updateRentedBook = "UPDATE RENT_BOOK " +
                 "SET RENTED = @RENTED, " +
                 "RETURN_STATUS = @RETURN_STATUS," +
                 "UPDATEDAT = @UPDATEDAT " +
                 "WHERE READER_ID = @READER_ID " +
-                "AND BOOK_ID = @BOOK_ID ";
+                "AND ID = @RENT_ID";
 
             using var command = new SqlCommand(updateRentedBook, _connection);
             try
@@ -308,7 +348,7 @@ namespace Library_Console.Repository
                 command.Parameters.AddWithValue("@RETURN_STATUS", rentBook.ReturnStatus);
                 command.Parameters.AddWithValue("@UPDATEDAT", rentBook.UpdatedAt);
                 command.Parameters.AddWithValue("@READER_ID", readerId);
-                command.Parameters.AddWithValue("@BOOK_ID", bookId);
+                command.Parameters.AddWithValue("@RENT_ID", rentId);
 
                 command.ExecuteNonQuery();
 

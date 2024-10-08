@@ -88,6 +88,9 @@ namespace Library_Console.Services
                     Console.WriteLine("Informe o Autor do livro: ");
                     book.Author = Console.ReadLine()!;
                 } while (!_rentBookRepository.GetExistingBookAuthor(book.Author));
+
+                if (_rentBookRepository.GetRentedBook(book))
+                    Console.WriteLine("Livro já está alugado");
             } while (_rentBookRepository.GetRentedBook(book));
 
             rentBook.Rented = true;
@@ -109,6 +112,7 @@ namespace Library_Console.Services
 
         public RentBooks ReturnRentedBook()
         {
+            int index;
             var reader = new Readers();
             var book = new Books();
             var rentedBook = new RentBooks();
@@ -116,11 +120,18 @@ namespace Library_Console.Services
             Console.WriteLine("Informe o CPF do leitor: ");
             reader.Document = Console.ReadLine()!;
 
-            Console.WriteLine("Informe o Título do livro: ");
-            book.Title = Console.ReadLine()!;
+            var bookList = _rentBookRepository.GetAllRentedBooksByReader(reader);
 
-            Console.WriteLine("Informe o Autor do livro: ");
-            book.Author = Console.ReadLine()!;
+            for (var i = 0; i < bookList.Count; i++)
+            {
+                Console.WriteLine($"{i + 1} - {bookList[i].Title} - {bookList[i].Author}");
+            }
+
+            do
+            {
+                Console.WriteLine("Escolha o livro a ser devolvido");
+                index = Convert.ToInt32(Console.ReadLine()!);
+            } while (index < 1 || index > bookList.Count);
 
             rentedBook.Rented = false;
 
@@ -128,7 +139,7 @@ namespace Library_Console.Services
 
             rentedBook.UpdatedAt = DateTime.Now;
 
-            _rentBookRepository.ReturnRentedBook(reader, book, rentedBook);
+            _rentBookRepository.ReturnRentedBook(reader, bookList[index - 1].Id, rentedBook);
 
             return rentedBook!;
         }
